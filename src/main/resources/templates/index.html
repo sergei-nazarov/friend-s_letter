@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<h1>Form</h1>
+<form action="#" method="post" th:action="@{/message}" th:object="${letter}">
+    <p>letter: <input th:field="*{message}" type="text"/></p>
+    <label>
+        <input th:field="*{singleUse}" type="checkbox"/> burn after reading
+    </label>
+    <p><input th:field="*{expirationDate}" type="datetime-local"/> <span th:text="${timezone}"/></p>
+
+    <p><input type="submit" value="Submit"/></p>
+</form>
+</body>
+</html>

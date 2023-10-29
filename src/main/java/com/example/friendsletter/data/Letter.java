@@ -9,17 +9,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "letters")
 public class Letter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String messageShortCode;
     private String messageId;
     private LocalDateTime expirationDate;
     private boolean singleUse;
+    private boolean publicLetter;
 
 }
