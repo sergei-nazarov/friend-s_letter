@@ -1,10 +1,9 @@
-package com.example.friendsletter.messages;
+package com.example.friendsletter.services.messages;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
@@ -14,6 +13,10 @@ import com.google.api.services.drive.model.GeneratedIds;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,21 +26,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Component
+@Profile("prod")
 public class GoogleDriveMessageStorage implements MessageStorage {
-    private static final String APPLICATION_NAME = "Friend's letter";
-    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final List<String> SCOPES =
-            Collections.singletonList(DriveScopes.DRIVE);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    @Value("${spring.application.name}")
+    private static String APPLICATION_NAME;
+
+    @Value("${messages.store.credential-path}:/credentials.json")
+    private static String CREDENTIALS_FILE_PATH;
+    @Value("${messages.store.folder}")
+    private String folderName;
+
     private Drive service;
-    private String folderName = "friends_letter";
-    private String folderId = "";
+    private String folderId;
 
-
-    public GoogleDriveMessageStorage() {
-        initDrive();
-    }
-
+    @PostConstruct
     private void initDrive() {
         InputStream credentialStream = GoogleDriveMessageStorage.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (credentialStream == null) {
@@ -46,10 +49,10 @@ public class GoogleDriveMessageStorage implements MessageStorage {
         try {
             final GoogleCredentials googleCredentials = ServiceAccountCredentials
                     .fromStream(credentialStream)
-                    .createScoped(SCOPES);
+                    .createScoped(Collections.singletonList(DriveScopes.DRIVE));
             HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(googleCredentials);
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            service = new Drive.Builder(httpTransport, JSON_FACTORY, requestInitializer)
+            service = new Drive.Builder(httpTransport, GsonFactory.getDefaultInstance(), requestInitializer)
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         } catch (IOException | GeneralSecurityException e) {

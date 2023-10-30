@@ -17,4 +17,5 @@ public class LetterDto {
     private LocalDateTime expirationDate;
     private boolean singleUse;
     private boolean publicLetter;
+    private String timezone;
 }

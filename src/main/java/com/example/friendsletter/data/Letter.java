@@ -1,12 +1,14 @@
 package com.example.friendsletter.data;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -15,7 +17,8 @@ import java.time.LocalDateTime;
 public class Letter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "letter_gen")
+    @SequenceGenerator(name = "letter_gen", sequenceName = "letters_SEQ", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
     private String messageShortCode;
@@ -24,4 +27,12 @@ public class Letter {
     private boolean singleUse;
     private boolean publicLetter;
 
+    //Lombok can't exclude field from @AllArgsConstructor, so...
+    public Letter(String messageShortCode, String messageId, LocalDateTime expirationDate, boolean singleUse, boolean publicLetter) {
+        this.messageShortCode = messageShortCode;
+        this.messageId = messageId;
+        this.expirationDate = expirationDate;
+        this.singleUse = singleUse;
+        this.publicLetter = publicLetter;
+    }
 }

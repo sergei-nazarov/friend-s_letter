@@ -1,4 +1,9 @@
-package com.example.friendsletter.messages;
+package com.example.friendsletter.services.messages;
+
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,12 +12,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+@Component
+@Profile("dev")
 public class LocalMessageStorage implements MessageStorage {
-    public Path localPath = Paths.get("storage");
+    @Value("${messages.store.folder:messages}")
+    public Path localPath;
 
-    public LocalMessageStorage() {
+    @PostConstruct
+    void init() {
         try {
-            Files.createDirectories(localPath);
+            Files.createDirectories(this.localPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

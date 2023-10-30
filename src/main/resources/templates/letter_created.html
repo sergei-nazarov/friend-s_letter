@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Form</h1>
-<form action="#" method="post" th:action="@{/}" th:object="${letter}">
+<form action="#" method="post" th:action="@{/message}" th:object="${letter}">
     <p>letter: <input th:field="*{message}" type="text"/></p>
     <label>
         <input th:field="*{singleUse}" type="checkbox"/> burn after reading
@@ -14,9 +14,8 @@
     <label>
         <input th:field="*{publicLetter}" type="checkbox"/> make letter publick
     </label>
-    <p><input th:field="*{expirationDate}" type="datetime-local"/> <span th:text="*{timezone}"/>
-    </p>
-    <input id="blogId" th:field="*{timezone}" type="hidden">
+    <p><input th:field="*{expirationDate}" type="datetime-local"/> <span th:text="${timezone}"/></p>
+
     <p><input type="submit" value="Submit"/></p>
 </form>
 </body>
