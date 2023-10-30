@@ -9,4 +9,12 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet author="sergey" id="1698607571340-2">
+        <addColumn tableName="LETTERS">
+            <column name="CREATED" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>

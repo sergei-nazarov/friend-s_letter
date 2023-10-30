@@ -3,21 +3,79 @@
 <head>
     <title>Getting Started: Handling Form Submission</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
 <body>
-<h1>Form</h1>
-<form action="#" method="post" th:action="@{/}" th:object="${letter}">
-    <p>letter: <input th:field="*{message}" type="text"/></p>
-    <label>
-        <input th:field="*{singleUse}" type="checkbox"/> burn after reading
-    </label>
-    <label>
-        <input th:field="*{publicLetter}" type="checkbox"/> make letter publick
-    </label>
-    <p><input th:field="*{expirationDate}" type="datetime-local"/> <span th:text="*{timezone}"/>
-    </p>
-    <input id="blogId" th:field="*{timezone}" type="hidden">
-    <p><input type="submit" value="Submit"/></p>
-</form>
+
+<style>
+    .form-control {
+        margin-bottom: 13px
+    }
+
+    .parent {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        overflow: auto;
+        background-color: aliceblue;
+    }
+</style>
+<div class="parent">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 well well-sm">
+                <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
+                <form action="#" class="form" method="post" role="form" th:action="@{/}" th:object="${letter}">
+                <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
+                          rows="9" th:field="*{message}"></textarea>
+                    <div class="text-danger" th:errors="*{message}" th:if="${#fields.hasErrors('message')}"></div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input th:field="*{singleUse}" type="checkbox"/> Burn after reading
+                            </label>
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input th:field="*{publicLetter}" type="checkbox"/> Make letter public
+                            </label>
+                        </div>
+                    </div>
+                    <label>Set expiration date if you want</label>
+                    <div class="row">
+                        <div></div>
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input th:field="*{expirationDate}" type="datetime-local"/>
+                            </label>
+                        </div>
+                        <div class="col-xs-6 col-md-6" th:text="*{timezone}">
+                        </div>
+
+                        <label>
+                            <input th:field="*{timezone}" type="hidden">
+                        </label>
+                    </div>
+                    <div class="text-danger" th:errors="*{expirationDate}"
+                         th:if="${#fields.hasErrors('expirationDate')}"></div>
+
+                    <div>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Get url</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
