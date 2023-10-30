@@ -22,7 +22,7 @@ public class Letter {
     @SequenceGenerator(name = "letter_gen", sequenceName = "letters_SEQ", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String messageShortCode;
+    private String letterShortCode;
     private String messageId;
     private LocalDateTime expirationDate;
     private boolean singleUse;
@@ -30,8 +30,8 @@ public class Letter {
     private LocalDateTime created;
 
     //Lombok can't exclude field from @AllArgsConstructor, so...
-    public Letter(String messageShortCode, String messageId, LocalDateTime expirationDate, boolean singleUse, boolean publicLetter) {
-        this.messageShortCode = messageShortCode;
+    public Letter(String letterShortCode, String messageId, LocalDateTime expirationDate, boolean singleUse, boolean publicLetter) {
+        this.letterShortCode = letterShortCode;
         this.messageId = messageId;
         this.expirationDate = expirationDate;
         this.singleUse = singleUse;

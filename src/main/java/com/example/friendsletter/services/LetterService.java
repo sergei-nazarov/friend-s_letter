@@ -2,7 +2,9 @@ package com.example.friendsletter.services;
 
 import com.example.friendsletter.data.Letter;
 import com.example.friendsletter.data.LetterDto;
-import com.example.friendsletter.repository.LettersRepository;
+import com.example.friendsletter.errors.LetterNotAvailableException;
+import com.example.friendsletter.errors.LetterNotFoundException;
+import com.example.friendsletter.repository.LetterRepository;
 import com.example.friendsletter.services.messages.MessageStorage;
 import com.example.friendsletter.services.url.UrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,35 +13,55 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 @Component
 public class LetterService {
 
     private final MessageStorage messageStorage;
     private final UrlGenerator urlGenerator;
-    private final LettersRepository repository;
+    private final LetterRepository repository;
 
     @Autowired
-    public LetterService(MessageStorage messageStorage, UrlGenerator urlGenerator, LettersRepository repository) {
+    public LetterService(MessageStorage messageStorage, UrlGenerator urlGenerator, LetterRepository repository) {
         this.messageStorage = messageStorage;
         this.urlGenerator = urlGenerator;
         this.repository = repository;
     }
 
-    public Letter saveLetter(LetterDto letterDto) {
+    public LetterDto saveLetter(LetterDto letterDto) {
         String messageId = messageStorage.save(letterDto.getMessage());
-        String messageShortCode = urlGenerator.generate();
-        LocalDateTime messageUtcDateTime = toUtc(letterDto.getExpirationDate(), letterDto.getTimezone());
-        Letter letter = new Letter(messageShortCode, messageId,
-                messageUtcDateTime,
+        String letterShortCode = urlGenerator.generate();
+        LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), letterDto.getTimezone());
+        Letter letter = new Letter(letterShortCode, messageId,
+                utcExpDate,
                 letterDto.isSingleUse(),
                 letterDto.isPublicLetter());
-        return repository.save(letter);
+        repository.save(letter);
+        letter.setExpirationDate(utcExpDate);
+        letter.setLetterShortCode(letterShortCode);
+        return new LetterDto(letterDto.getMessage(),
+                utcExpDate, letter.isSingleUse(), letter.isPublicLetter(),
+                null, letter.getCreated(), letter.getLetterShortCode());
+    }
+
+    public LetterDto readLetter(String letterShortCode) throws LetterNotFoundException, LetterNotAvailableException {
+        Optional<Letter> letterOptional = repository.findByLetterShortCode(letterShortCode);
+        if (letterOptional.isEmpty()) {
+            throw new LetterNotFoundException(letterShortCode);
+        }
+        Letter letter = letterOptional.get();
+        String message = messageStorage.read(letter.getMessageId());
+        if (LocalDateTime.now(ZoneOffset.UTC).isAfter(letter.getExpirationDate())) {
+            throw new LetterNotAvailableException(letterShortCode, "Letter expired. Exp date is " + letter.getExpirationDate() + " UTC");
+        }//todo error handling and singleUse
+        return new LetterDto(message, letter.getExpirationDate(), letter.isSingleUse(),
+                letter.isPublicLetter(), null, letter.getCreated(), letterShortCode);
     }
 
     private LocalDateTime toUtc(LocalDateTime dateTime, String zoneId) {
         if (dateTime == null) {
-            return null;
+            return LocalDateTime.of(2100, 1, 1, 0, 0);
         }
         return dateTime.atZone(ZoneId.of(zoneId))
                 .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();

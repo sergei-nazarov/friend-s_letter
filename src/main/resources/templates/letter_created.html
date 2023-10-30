@@ -1,22 +1,69 @@
-<!DOCTYPE HTML>
-<html xmlns:th="https://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="eng" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Handling Form Submission</title>
+    <title>Letter for you</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
-<body>
-<h1>Form</h1>
-<form action="#" method="post" th:action="@{/message}" th:object="${letter}">
-    <p>letter: <input th:field="*{message}" type="text"/></p>
-    <label>
-        <input th:field="*{singleUse}" type="checkbox"/> burn after reading
-    </label>
-    <label>
-        <input th:field="*{publicLetter}" type="checkbox"/> make letter publick
-    </label>
-    <p><input th:field="*{expirationDate}" type="datetime-local"/> <span th:text="${timezone}"/></p>
+<style>
+    .form-control {
+        margin-bottom: 13px
+    }
 
-    <p><input type="submit" value="Submit"/></p>
-</form>
+    .parent {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        overflow: auto;
+        background-color: aliceblue;
+    }
+</style>
+<body>
+<div class="parent">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 well well-sm">
+
+                <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
+                <div th:object="${letter}">
+                    <label>Letter available by url:</label>
+                    <p th:text="${requestURI} + '/' + *{letterShortCode}"></p>
+                    <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
+                              rows="9" th:field="*{message}"></textarea>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6">
+                            Created
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                            Expire date
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6" th:text="*{#temporals.format(created,'dd-MM-yyyy HH:mm')} ">
+                        </div>
+                        <div class="col-xs-6 col-md-6"
+                             th:text="*{#temporals.format(expirationDate,'dd-MM-yyyy HH:mm')} ">
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <a th:href="@{/}">Create one more letter!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

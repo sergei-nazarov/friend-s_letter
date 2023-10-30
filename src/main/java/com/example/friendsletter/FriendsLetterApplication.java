@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FriendsLetterApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FriendsLetterApplication.class, args);
         //todo add local compressed message store
         //todo message stats
         //todo localization en/fr/ru
@@ -15,7 +14,9 @@ public class FriendsLetterApplication {
         //todo bootstrap
         //todo message qr code
         //todo list public messages
+        //todo copy letter button
 
+        SpringApplication.run(FriendsLetterApplication.class, args);
     }
 
 }

@@ -17,4 +17,8 @@
     </changeSet>
 
 
+    <changeSet author="sergey" id="1698607571340-3">
+        <renameColumn newColumnName="LETTER_SHORT_CODE" oldColumnName="MESSAGE_SHORT_CODE" tableName="LETTERS"/>
+    </changeSet>
+
 </databaseChangeLog>
