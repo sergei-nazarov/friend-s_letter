@@ -2,7 +2,6 @@ package com.example.friendsletter.controllers;
 
 import com.example.friendsletter.data.LetterDto;
 import com.example.friendsletter.errors.LetterNotAvailableException;
-import com.example.friendsletter.errors.LetterNotFoundException;
 import com.example.friendsletter.services.LetterService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -49,15 +48,12 @@ public class MainController {
     }
 
     @GetMapping("/{letterShortCode}")
-    String readLetter(@PathVariable("letterShortCode") String letterShortCode, Model model) {
-        try {
-            LetterDto letterDto = letterService.readLetter(letterShortCode);
-            model.addAttribute("letter", letterDto);
-            return "letter";
-        } catch (LetterNotFoundException | LetterNotAvailableException e) {
-            log.warn("", e);
-            return "redirect:/"; //todo handle
-        }
+    String readLetter(@PathVariable("letterShortCode") String letterShortCode, Model model)
+            throws LetterNotAvailableException {
+
+        LetterDto letterDto = letterService.readLetter(letterShortCode);
+        model.addAttribute("letter", letterDto);
+        return "letter";
     }
 
     @ModelAttribute("requestURI")

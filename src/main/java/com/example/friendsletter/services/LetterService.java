@@ -3,7 +3,6 @@ package com.example.friendsletter.services;
 import com.example.friendsletter.data.Letter;
 import com.example.friendsletter.data.LetterDto;
 import com.example.friendsletter.errors.LetterNotAvailableException;
-import com.example.friendsletter.errors.LetterNotFoundException;
 import com.example.friendsletter.repository.LetterRepository;
 import com.example.friendsletter.services.messages.MessageStorage;
 import com.example.friendsletter.services.url.UrlGenerator;
@@ -45,16 +44,16 @@ public class LetterService {
                 null, letter.getCreated(), letter.getLetterShortCode());
     }
 
-    public LetterDto readLetter(String letterShortCode) throws LetterNotFoundException, LetterNotAvailableException {
+    public LetterDto readLetter(String letterShortCode) throws LetterNotAvailableException {
         Optional<Letter> letterOptional = repository.findByLetterShortCode(letterShortCode);
         if (letterOptional.isEmpty()) {
-            throw new LetterNotFoundException(letterShortCode);
+            throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.NOT_FOUND);
         }
         Letter letter = letterOptional.get();
         String message = messageStorage.read(letter.getMessageId());
         if (LocalDateTime.now(ZoneOffset.UTC).isAfter(letter.getExpirationDate())) {
-            throw new LetterNotAvailableException(letterShortCode, "Letter expired. Exp date is " + letter.getExpirationDate() + " UTC");
-        }//todo error handling and singleUse
+            throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.EXPIRED);
+        }//todo error singleUse
         return new LetterDto(message, letter.getExpirationDate(), letter.isSingleUse(),
                 letter.isPublicLetter(), null, letter.getCreated(), letterShortCode);
     }
@@ -66,5 +65,4 @@ public class LetterService {
         return dateTime.atZone(ZoneId.of(zoneId))
                 .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
-
 }

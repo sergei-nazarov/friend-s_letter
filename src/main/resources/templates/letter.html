@@ -35,7 +35,7 @@
                 <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
                 <div th:object="${letter}">
                     <label>This letter for you!</label>
-                    <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
+                    <textarea class="form-control" cols="25" disabled placeholder="Start writing..." required="required"
                               rows="9" th:field="*{message}"></textarea>
 
                     <div class="row">
