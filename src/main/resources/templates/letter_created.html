@@ -68,7 +68,7 @@
                 <div th:object="${letter}">
                     <label>Letter available by url:</label>
                     <p>
-                        <span id="urlToLetter" th:text="${requestURI} + '/' + *{letterShortCode}"></span>
+                        <span id="urlToLetter" th:text="${requestURI} + '/l/' + *{letterShortCode}"></span>
                         <button onclick="copyToBuffer()">Copy url</button>
                     </p>
 

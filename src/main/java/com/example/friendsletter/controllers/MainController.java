@@ -28,7 +28,7 @@ public class MainController {
         this.letterService = letterService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     String mainPage(Model model, TimeZone timezone) {
         LetterDto letterDto = new LetterDto();
         letterDto.setTimezone(timezone.getID());
@@ -47,7 +47,7 @@ public class MainController {
         return "letter_created";
     }
 
-    @GetMapping("/{letterShortCode}")
+    @GetMapping("/l/{letterShortCode}")
     String readLetter(@PathVariable("letterShortCode") String letterShortCode, Model model)
             throws LetterNotAvailableException {
 
