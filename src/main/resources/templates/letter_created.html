@@ -68,12 +68,26 @@
                 <div th:object="${letter}">
                     <label>Letter available by url:</label>
                     <p>
-                        <span id="urlToLetter" th:text="${requestURI} + '/l/' + *{letterShortCode}"></span>
+                        <span id="urlToLetter" th:text="${serverHost} + '/l/' + *{letterShortCode}"></span>
                         <button onclick="copyToBuffer()">Copy url</button>
                     </p>
 
                     <textarea class="form-control" cols="25" disabled placeholder="Start writing..." required="required"
                               rows="9" th:field="*{message}"></textarea>
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input class="form-check-input" disabled th:field="*{singleUse}" type="checkbox"/> Burn
+                                after reading
+                            </label>
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
+                                Make letter public
+                            </label>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-xs-6 col-md-6">

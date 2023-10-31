@@ -35,8 +35,23 @@
                 <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
                 <div th:object="${letter}">
                     <label>This letter for you!</label>
-                    <textarea class="form-control" cols="25" disabled placeholder="Start writing..." required="required"
+                    <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
                               rows="9" th:field="*{message}"></textarea>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input class="form-check-input" disabled th:field="*{singleUse}" type="checkbox"/> Burn
+                                after reading
+                            </label>
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                            <label>
+                                <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
+                                Make letter public
+                            </label>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-xs-6 col-md-6">

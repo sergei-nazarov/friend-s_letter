@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,15 +43,12 @@ public class LetterService {
         String letterShortCode = urlGenerator.generate();
         LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), letterDto.getTimezone());
         Letter letter = new Letter(letterShortCode, messageId,
-                utcExpDate,
-                letterDto.isSingleUse(),
-                letterDto.isPublicLetter());
+                utcExpDate, letterDto.isSingleUse(), letterDto.isPublicLetter());
         letterRepository.save(letter);
-        letter.setExpirationDate(utcExpDate);
-        letter.setLetterShortCode(letterShortCode);
         return new LetterDto(letterDto.getMessage(),
-                utcExpDate, letter.isSingleUse(), letter.isPublicLetter(),
-                null, letter.getCreated(), letter.getLetterShortCode());
+                fromUtc(utcExpDate, letterDto.getTimezone()), letter.isSingleUse(),
+                letter.isPublicLetter(), letterDto.getTimezone(),
+                fromUtc(letter.getCreated(), letterDto.getTimezone()), letterShortCode);
     }
 
     public LetterDto readLetter(String letterShortCode) throws LetterNotAvailableException {
@@ -82,11 +80,27 @@ public class LetterService {
         });
     }
 
-    private LocalDateTime toUtc(LocalDateTime dateTime, String zoneId) {
+    public LocalDateTime toUtc(LocalDateTime dateTime, String zoneId) {
         if (dateTime == null) {
             return LocalDateTime.of(2100, 1, 1, 0, 0);
         }
         return dateTime.atZone(ZoneId.of(zoneId))
                 .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    }
+
+    public LocalDateTime fromUtc(LocalDateTime dateTime, ZoneId zoneId) {
+        if (dateTime == null) {
+            return LocalDateTime.of(2100, 1, 1, 0, 0);
+        }
+        return dateTime.atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(zoneId).toLocalDateTime();
+    }
+
+    public LocalDateTime fromUtc(LocalDateTime dateTime, TimeZone timeZone) {
+        return fromUtc(dateTime, timeZone.toZoneId());
+    }
+
+    public LocalDateTime fromUtc(LocalDateTime dateTime, String zoneId) {
+        return fromUtc(dateTime, ZoneId.of(zoneId));
     }
 }

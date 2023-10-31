@@ -38,26 +38,34 @@ public class MainController {
     }
 
     @PostMapping
-    String saveLetter(@ModelAttribute("letter") @Valid LetterDto letterDto, BindingResult bindingResult, Model model) {
+    String saveLetter(@ModelAttribute("letter") @Valid LetterDto letterDto,
+                      BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "index";
         }
         LetterDto letter = letterService.saveLetter(letterDto);
+
         model.addAttribute("letter", letter);
         return "letter_created";
     }
 
     @GetMapping("/l/{letterShortCode}")
     String readLetter(@PathVariable("letterShortCode") String letterShortCode,
-                      Model model, HttpServletRequest request)
+                      Model model, HttpServletRequest request, TimeZone tz)
             throws LetterNotAvailableException {
         LetterDto letterDto = letterService.readLetter(letterShortCode);
+        convertDtoTimeZoneToLocal(letterDto, tz);
         letterService.writeVisit(letterShortCode, request.getRemoteAddr());
         model.addAttribute("letter", letterDto);
         return "letter";
     }
 
-    @ModelAttribute("requestURI")
+    private void convertDtoTimeZoneToLocal(LetterDto letterDto, TimeZone tz) {
+        letterDto.setCreated(letterService.fromUtc(letterDto.getCreated(), tz));
+        letterDto.setExpirationDate(letterService.fromUtc(letterDto.getExpirationDate(), tz));
+    }
+
+    @ModelAttribute("serverHost")
     String getRequestServletPath() {
         return ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
     }
