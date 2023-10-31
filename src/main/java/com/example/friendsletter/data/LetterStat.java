@@ -19,11 +19,11 @@ public class LetterStat {
 
     private LocalDateTime visitTimestamp;
     private String ip;
-    private String messageShortCode;
+    private String letterShortCode;
 
-    public LetterStat(LocalDateTime visitTimestamp, String ip, String letterId) {
+    public LetterStat(LocalDateTime visitTimestamp, String ip, String letterShortCode) {
         this.visitTimestamp = visitTimestamp;
         this.ip = ip;
-        this.messageShortCode = letterId;
+        this.letterShortCode = letterShortCode;
     }
 }

@@ -24,16 +24,16 @@ public class LetterService {
     private final MessageStorage messageStorage;
     private final UrlGenerator urlGenerator;
     private final LetterRepository letterRepository;
-    private final LetterStatisticsRepository letterStatisticsRepository;
+    private final LetterStatisticsRepository letterStatRepository;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
-    public LetterService(MessageStorage messageStorage, UrlGenerator urlGenerator, LetterRepository repository, LetterStatisticsRepository letterStatisticsRepository) {
+    public LetterService(MessageStorage messageStorage, UrlGenerator urlGenerator, LetterRepository repository, LetterStatisticsRepository letterStatRepository) {
         this.messageStorage = messageStorage;
         this.urlGenerator = urlGenerator;
         this.letterRepository = repository;
-        this.letterStatisticsRepository = letterStatisticsRepository;
+        this.letterStatRepository = letterStatRepository;
     }
 
     public LetterDto saveLetter(LetterDto letterDto) {
@@ -58,10 +58,12 @@ public class LetterService {
             throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.NOT_FOUND);
         }
         Letter letter = letterOptional.get();
-        String message = messageStorage.read(letter.getMessageId());
         if (LocalDateTime.now(ZoneOffset.UTC).isAfter(letter.getExpirationDate())) {
             throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.EXPIRED);
-        }//todo error singleUse
+        } else if (letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
+            throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.HAS_BEEN_READ);
+        }
+        String message = messageStorage.read(letter.getMessageId());
         return new LetterDto(message, letter.getExpirationDate(), letter.isSingleUse(),
                 letter.isPublicLetter(), null, letter.getCreated(), letterShortCode);
     }
@@ -70,7 +72,7 @@ public class LetterService {
         executor.execute(() -> {
             LetterStat letterStat = new LetterStat(
                     LocalDateTime.now(ZoneOffset.UTC), ip, letterShortCode);
-            letterStatisticsRepository.save(letterStat);
+            letterStatRepository.save(letterStat);
         });
     }
 

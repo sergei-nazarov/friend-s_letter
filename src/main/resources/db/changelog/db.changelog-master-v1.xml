@@ -32,7 +32,7 @@
             </column>
             <column name="VISIT_TIMESTAMP" type="TIMESTAMP"/>
             <column name="IP" type="VARCHAR(255)"/>
-            <column name="MESSAGE_SHORT_CODE" type="VARCHAR(255)"/>
+            <column name="LETTER_SHORT_CODE" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
 

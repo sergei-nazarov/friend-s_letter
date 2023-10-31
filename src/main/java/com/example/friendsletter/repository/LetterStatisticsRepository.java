@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LetterStatisticsRepository extends JpaRepository<LetterStat, Long> {
 
+    int countAllByLetterShortCodeIs(String messageShortCode);
+
 }
