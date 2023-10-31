@@ -11,7 +11,6 @@ public class FriendsLetterApplication {
         //todo message stats
         //todo localization en/fr/ru
         //todo tests
-        //todo bootstrap
         //todo message qr code
         //todo list public messages
         //todo copy letter button

@@ -7,6 +7,14 @@
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
+<script>
+    function copyToBuffer() {
+        /* Get the text field */
+        var copyText = document.getElementById("urlToLetter");
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.textContent);
+    }
+</script>
 <style>
     .form-control {
         margin-bottom: 13px
@@ -35,7 +43,11 @@
                 <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
                 <div th:object="${letter}">
                     <label>Letter available by url:</label>
-                    <p th:text="${requestURI} + '/' + *{letterShortCode}"></p>
+                    <p>
+                        <span id="urlToLetter" th:text="${requestURI} + '/' + *{letterShortCode}"></span>
+                        <button onclick="copyToBuffer()">Copy url</button>
+                    </p>
+
                     <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
                               rows="9" th:field="*{message}"></textarea>
 

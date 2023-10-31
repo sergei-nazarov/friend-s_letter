@@ -65,5 +65,4 @@ public class MainController {
         return ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
     }
 
-
 }
