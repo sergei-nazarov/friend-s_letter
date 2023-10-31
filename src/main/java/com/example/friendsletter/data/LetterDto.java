@@ -21,7 +21,7 @@ public class LetterDto {
     private LocalDateTime expirationDate;
     private boolean singleUse;
     private boolean publicLetter;
-    private String timezone;
+    private String timezone;//todo local timezone in view
     private LocalDateTime created;
     private String letterShortCode;
 }

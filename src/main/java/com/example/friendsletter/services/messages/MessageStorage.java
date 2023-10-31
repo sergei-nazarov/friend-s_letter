@@ -1,6 +1,7 @@
 package com.example.friendsletter.services.messages;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +31,7 @@ public interface MessageStorage {
      * @param fileId file id to read
      * @return message as an input stream
      */
-    InputStream readAsStream(String fileId);
+    InputStream readAsStream(String fileId) throws FileNotFoundException;
 
     /**
      * Delete the message from message store
@@ -73,10 +74,14 @@ public interface MessageStorage {
      *
      * @param fileId file id to read
      * @return message as a text
+     * @throws FileNotFoundException - message file not found.
+     * @throws RuntimeException      - any other errors
      */
-    default String read(String fileId) {
+    default String read(String fileId) throws FileNotFoundException {
         try {
             return new String(readAsStream(fileId).readAllBytes(), StandardCharsets.UTF_8);
+        } catch (FileNotFoundException e) {
+            throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,7 @@
 package com.example.friendsletter.services.messages;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -91,11 +93,16 @@ public class GoogleDriveMessageStorage implements MessageStorage {
         return false;
     }
 
-    @Override
-    public InputStream readAsStream(String fileId) {
+    public static void main(String[] args) {
+        GoogleDriveMessageStorage googleDriveMessageStorage = new GoogleDriveMessageStorage();
+        googleDriveMessageStorage.folderName = "friends_letter";
+        GoogleDriveMessageStorage.CREDENTIALS_FILE_PATH = "/credentials.json";
+        GoogleDriveMessageStorage.APPLICATION_NAME = "df";
+        googleDriveMessageStorage.initDrive();
+        System.out.println(googleDriveMessageStorage.getAllFiles());
         try {
-            return service.files().get(fileId).executeMediaAsInputStream(); //todo check whether file exists
-        } catch (IOException e) {
+            googleDriveMessageStorage.read("1PWuPef0o-2JGJ8kcE0acoNsj_UQyE1D55");
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -153,6 +160,20 @@ public class GoogleDriveMessageStorage implements MessageStorage {
                 .setPageSize(1000)
                 .setFields("nextPageToken, files(id, name, parents, mimeType)")
                 .execute();
+    }
+
+    @Override
+    public InputStream readAsStream(String fileId) throws FileNotFoundException {
+        try {
+            return service.files().get(fileId).executeMediaAsInputStream();
+        } catch (IOException e) {
+            if (e instanceof GoogleJsonResponseException googleException) {
+                if (googleException.getStatusCode() == 404) {
+                    throw new FileNotFoundException(fileId);
+                }
+            }
+            throw new RuntimeException(e);
+        }
     }
 }
 

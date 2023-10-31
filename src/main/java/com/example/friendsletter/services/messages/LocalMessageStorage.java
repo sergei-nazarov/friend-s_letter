@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -59,12 +60,12 @@ public class LocalMessageStorage implements MessageStorage {
     }
 
     @Override
-    public InputStream readAsStream(String fileId) {
+    public InputStream readAsStream(String fileId) throws FileNotFoundException {
         Path filePath = localPath.resolve(fileId);
         try {
             return Files.newInputStream(filePath, StandardOpenOption.READ);
         } catch (IOException e) {
-            throw new RuntimeException(e); //todo handle file not found
+            throw new FileNotFoundException(filePath.toString()); //todo handle file not found
         }
     }
 

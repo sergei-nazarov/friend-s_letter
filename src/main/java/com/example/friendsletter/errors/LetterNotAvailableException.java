@@ -9,6 +9,9 @@ public class LetterNotAvailableException extends Throwable {
     public static final int EXPIRED = 2;
     public static final int HAS_BEEN_READ = 3;
 
+    public static final int MESSAGE_NOT_FOUND = 4;
+
+
     private final String letterShortCode;
     private final int errorCode;
 

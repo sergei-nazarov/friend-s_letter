@@ -10,8 +10,9 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 public class FriendsLetterApplication {
 
     public static void main(String[] args) {
+
         //todo add local compressed message store
-        //todo message stats
+        //message stats //ready
         //todo localization en/fr/ru
         //todo tests
         //todo message qr code

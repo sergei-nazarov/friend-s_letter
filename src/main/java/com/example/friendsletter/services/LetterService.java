@@ -11,6 +11,7 @@ import com.example.friendsletter.services.url.UrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -60,10 +61,15 @@ public class LetterService {
         Letter letter = letterOptional.get();
         if (LocalDateTime.now(ZoneOffset.UTC).isAfter(letter.getExpirationDate())) {
             throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.EXPIRED);
-        } else if (letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
+        } else if (letter.isSingleUse() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
             throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.HAS_BEEN_READ);
         }
-        String message = messageStorage.read(letter.getMessageId());
+        String message;
+        try {
+            message = messageStorage.read(letter.getMessageId());
+        } catch (FileNotFoundException e) {
+            throw new LetterNotAvailableException(letterShortCode, LetterNotAvailableException.MESSAGE_NOT_FOUND);
+        }
         return new LetterDto(message, letter.getExpirationDate(), letter.isSingleUse(),
                 letter.isPublicLetter(), null, letter.getCreated(), letterShortCode);
     }

@@ -25,6 +25,7 @@ public class LetterViewExceptionHandler {
             case LetterNotAvailableException.NOT_PUBLIC -> key = "read.error.not_public";
             case LetterNotAvailableException.EXPIRED -> key = "read.error.expired";
             case LetterNotAvailableException.HAS_BEEN_READ -> key = "read.error.has_been_read";
+            case LetterNotAvailableException.MESSAGE_NOT_FOUND -> key = "read.error.message_not_found";
             default -> throw new RuntimeException("Unexpected letter exception code:" + errorCode);
         }
         String errorMessage = messageSource.getMessage(key, new String[]{e.getLetterShortCode()}, null);
