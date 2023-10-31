@@ -13,7 +13,8 @@ public class FriendsLetterApplication {
         //todo tests
         //todo message qr code
         //todo list public messages
-        //todo copy letter button
+        //copy letter button //ready
+        //todo redirect after post
 
         SpringApplication.run(FriendsLetterApplication.class, args);
     }
