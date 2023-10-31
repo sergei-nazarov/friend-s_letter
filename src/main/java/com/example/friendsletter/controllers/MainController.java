@@ -3,6 +3,7 @@ package com.example.friendsletter.controllers;
 import com.example.friendsletter.data.LetterDto;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,15 @@ public class MainController {
         }
         LetterDto letter = letterService.saveLetter(letterDto);
         model.addAttribute("letter", letter);
-        System.out.println(letter);
         return "letter_created";
     }
 
     @GetMapping("/l/{letterShortCode}")
-    String readLetter(@PathVariable("letterShortCode") String letterShortCode, Model model)
+    String readLetter(@PathVariable("letterShortCode") String letterShortCode,
+                      Model model, HttpServletRequest request)
             throws LetterNotAvailableException {
-
         LetterDto letterDto = letterService.readLetter(letterShortCode);
+        letterService.writeVisit(letterShortCode, request.getRemoteAddr());
         model.addAttribute("letter", letterDto);
         return "letter";
     }

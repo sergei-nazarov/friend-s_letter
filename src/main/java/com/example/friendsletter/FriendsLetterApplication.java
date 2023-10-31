@@ -19,6 +19,7 @@ public class FriendsLetterApplication {
         //copy letter button //ready
         //todo redirect after post
         //todo rate limiter
+        //todo logs
 
         SpringApplication.run(FriendsLetterApplication.class, args);
     }
@@ -29,6 +30,7 @@ public class FriendsLetterApplication {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages");
         messageSource.setCacheSeconds(10); //reload messages every 10 seconds
+        messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 }

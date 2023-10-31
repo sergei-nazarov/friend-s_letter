@@ -17,8 +17,23 @@
     </changeSet>
 
 
-    <changeSet author="sergey" id="1698607571340-3">
+    <changeSet author="sergey" id="1698607571341-1">
         <renameColumn newColumnName="LETTER_SHORT_CODE" oldColumnName="MESSAGE_SHORT_CODE" tableName="LETTERS"/>
+    </changeSet>
+
+    <changeSet author="sergey (generated)" id="1698607571341-2">
+        <createSequence sequenceName="LETTERS_STAT_SEQ"/>
+    </changeSet>
+
+    <changeSet author="sergey (generated)" id="1698607571339-2">
+        <createTable tableName="LETTERS_STAT">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_3"/>
+            </column>
+            <column name="VISIT_TIMESTAMP" type="TIMESTAMP"/>
+            <column name="IP" type="VARCHAR(255)"/>
+            <column name="MESSAGE_SHORT_CODE" type="VARCHAR(255)"/>
+        </createTable>
     </changeSet>
 
 </databaseChangeLog>
