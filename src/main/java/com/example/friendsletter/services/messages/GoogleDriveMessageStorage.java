@@ -10,11 +10,11 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.google.api.services.drive.model.GeneratedIds;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -27,20 +27,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 @Profile("prod")
+@Slf4j
 public class GoogleDriveMessageStorage implements MessageStorage {
-    @Value("${spring.application.name}")
-    private static String APPLICATION_NAME;
-
-    @Value("${messages.store.credential-path}:/credentials.json")
-    private static String CREDENTIALS_FILE_PATH;
+    private static final int ID_CAPACITY = 3;//I don't want to request a lot of ids from Google
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     @Value("${messages.store.folder}")
     private String folderName;
 
     private Drive service;
     private String folderId;
+    @Value("${spring.application.name}")
+    private String APPLICATION_NAME;
+    @Value("${messages.store.credential-path:/credentials.json}")
+    private String CREDENTIALS_FILE_PATH;
+    private BlockingQueue<String> ids;
 
     @PostConstruct
     private void initDrive() {
@@ -60,26 +67,59 @@ public class GoogleDriveMessageStorage implements MessageStorage {
         } catch (IOException | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
+        ids = new ArrayBlockingQueue<>(ID_CAPACITY);
+        runGoogleDriveIdRequester();
         findFolderId();
+    }
+
+    private void runGoogleDriveIdRequester() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    int requestCount = ID_CAPACITY + 1;
+                    log.info("Request " + requestCount + " file ids from Google Drive for storing messages");
+                    List<String> newMessageIds = service.files().generateIds().setCount(requestCount).execute().getIds();
+                    for (String newMessageId : newMessageIds) {
+                        ids.put(newMessageId); //heart
+                    }
+                } catch (IOException e) {
+                    log.error("Error during getting ids from Google Drive", e);
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }, "Drive updater").start();
     }
 
     @Override
     public String save(InputStream message) {
         try {
-            // todo replace with queue in order to request a lot of ids for single request
-            GeneratedIds execute = service.files().generateIds().setCount(1).execute();
-            String fileId = execute.getIds().get(0);
+            String fileId = ids.take();
+            saveLetterInStorage(message, fileId);
+            return fileId;
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private void saveLetterInStorage(InputStream message, String fileId) throws IOException {
+        executorService.execute(() -> {
             File fileMetadata = new File()
                     .setId(fileId)
                     .setParents(Collections.singletonList(folderId))
                     .setName(fileId);
             InputStreamContent streamContent = new InputStreamContent("text/plain", message);
-            File file = service.files().create(fileMetadata, streamContent).setFields("id").execute();
-            return file.getId();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            try {
+                service.files().create(fileMetadata, streamContent).setFields("id").execute();
+            } catch (IOException e) {
+                throw new RuntimeException(e);//todo retry
+            }
+        });
     }
 
     @Override
@@ -91,20 +131,6 @@ public class GoogleDriveMessageStorage implements MessageStorage {
             throw new RuntimeException(e);
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-        GoogleDriveMessageStorage googleDriveMessageStorage = new GoogleDriveMessageStorage();
-        googleDriveMessageStorage.folderName = "friends_letter";
-        GoogleDriveMessageStorage.CREDENTIALS_FILE_PATH = "/credentials.json";
-        GoogleDriveMessageStorage.APPLICATION_NAME = "df";
-        googleDriveMessageStorage.initDrive();
-        System.out.println(googleDriveMessageStorage.getAllFiles());
-        try {
-            googleDriveMessageStorage.read("1PWuPef0o-2JGJ8kcE0acoNsj_UQyE1D55");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

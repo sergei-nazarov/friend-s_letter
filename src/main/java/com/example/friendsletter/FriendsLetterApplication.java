@@ -9,17 +9,21 @@ public class FriendsLetterApplication {
     public static void main(String[] args) {
 
         //todo add local compressed message store
-        //todo localization en/fr/ru
         //todo tests
         //todo message qr code
         //todo list public messages
         //todo redirect after post
         //todo rate limiter
-        //todo logs
+        //todo swagger
+        //todo api endpoints
+        //todo javadoc
+        //todo cache!!
+        //todo 404 handle
 
         //local timezone in view
-        //message stats //ready
-        //copy letter button //ready
+        //message stats
+        //copy letter button
+        //localization en/fr/ru
 
 
         SpringApplication.run(FriendsLetterApplication.class, args);

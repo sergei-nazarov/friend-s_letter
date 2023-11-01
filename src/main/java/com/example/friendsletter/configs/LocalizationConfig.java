@@ -1,4 +1,4 @@
-package com.example.friendsletter;
+package com.example.friendsletter.configs;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Locale;
 
 @Configuration
-public class ServerConfig implements WebMvcConfigurer {
+public class LocalizationConfig implements WebMvcConfigurer {
 
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages");
         messageSource.setFallbackToSystemLocale(false);
-        messageSource.setCacheSeconds(1800); //reload messages every 1800 seconds
+        messageSource.setCacheSeconds(1800);
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }

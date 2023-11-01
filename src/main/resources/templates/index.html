@@ -56,16 +56,17 @@
                         <div class="text-danger" th:errors="*{message}" th:if="${#fields.hasErrors('message')}"></div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-12">
                                 <label>
                                     <input class="form-check-input" th:field="*{singleUse}" th:value="#{letter.burn}"
                                            type="checkbox"/>
                                     <span th:text="#{letter.burn}">Burn after reading</span>
                                 </label>
                             </div>
-                            <div class="col-xs-6 col-md-6">
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
                                 <label>
-
                                     <input class="form-check-input"
                                            th:field="*{publicLetter}" type="checkbox"/>
                                     <span th:text="#{letter.public}">Make letter public</span>

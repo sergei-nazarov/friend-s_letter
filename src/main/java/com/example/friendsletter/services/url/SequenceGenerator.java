@@ -1,6 +1,6 @@
 package com.example.friendsletter.services.url;
 
-public interface UrlGenerator {
+public interface SequenceGenerator {
     String generate();
 
 }

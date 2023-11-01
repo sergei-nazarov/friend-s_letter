@@ -38,15 +38,17 @@
                     <label th:text="#{letter.for_you}">This letter for you!</label>
                     <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
                               rows="9" th:field="*{message}"></textarea>
-
                     <div class="row">
-                        <div class="col-xs-6 col-md-6">
+
+                        <div class="col-xs-12 col-md-12">
                             <label>
                                 <input class="form-check-input" disabled th:field="*{singleUse}" type="checkbox"/>
                                 <span th:text="#{letter.burn}">Burn after reading</span>
                             </label>
                         </div>
-                        <div class="col-xs-6 col-md-6">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
                             <label>
                                 <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
                                 <span th:text="#{letter.public}">Make letter public</span>
@@ -55,7 +57,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-6 col-md-6" th:text="#{letter.create_date}">
+                        <div class="col-xs-6 col-md-6" th:text="#{letter.created}">
                             Created
                         </div>
                         <div class="col-xs-6 col-md-6" th:text="#{letter.exp_date}">

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class UuidUrlGenerator implements UrlGenerator {
+public class UuidUrlGenerator implements SequenceGenerator {
 
     @Value("${messages.url.length:8}")
     int length;

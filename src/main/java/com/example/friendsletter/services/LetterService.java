@@ -7,7 +7,7 @@ import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.repository.LetterRepository;
 import com.example.friendsletter.repository.LetterStatisticsRepository;
 import com.example.friendsletter.services.messages.MessageStorage;
-import com.example.friendsletter.services.url.UrlGenerator;
+import com.example.friendsletter.services.url.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +24,14 @@ import java.util.concurrent.Executors;
 public class LetterService {
 
     private final MessageStorage messageStorage;
-    private final UrlGenerator urlGenerator;
+    private final SequenceGenerator urlGenerator;
     private final LetterRepository letterRepository;
     private final LetterStatisticsRepository letterStatRepository;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
-    public LetterService(MessageStorage messageStorage, UrlGenerator urlGenerator, LetterRepository repository, LetterStatisticsRepository letterStatRepository) {
+    public LetterService(MessageStorage messageStorage, SequenceGenerator urlGenerator, LetterRepository repository, LetterStatisticsRepository letterStatRepository) {
         this.messageStorage = messageStorage;
         this.urlGenerator = urlGenerator;
         this.letterRepository = repository;
