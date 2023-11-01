@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="eng" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Letter for you</title>
+    <title th:text="#{site.headline.created}">Letter for you</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
@@ -66,10 +66,10 @@
 
                 <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
                 <div th:object="${letter}">
-                    <label>Letter available by url:</label>
+                    <label th:text="#{letter.available_url}">Letter available by url:</label>
                     <p>
                         <span id="urlToLetter" th:text="${serverHost} + '/l/' + *{letterShortCode}"></span>
-                        <button onclick="copyToBuffer()">Copy url</button>
+                        <button onclick="copyToBuffer()" th:text="#{letter.copy_url}">Copy url</button>
                     </p>
 
                     <textarea class="form-control" cols="25" disabled placeholder="Start writing..." required="required"
@@ -77,23 +77,23 @@
                     <div class="row">
                         <div class="col-xs-6 col-md-6">
                             <label>
-                                <input class="form-check-input" disabled th:field="*{singleUse}" type="checkbox"/> Burn
-                                after reading
+                                <input class="form-check-input" disabled th:field="*{singleUse}" type="checkbox"/>
+                                <span th:text="#{letter.burn}">Make letter public</span>
                             </label>
                         </div>
                         <div class="col-xs-6 col-md-6">
                             <label>
                                 <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
-                                Make letter public
+                                <span th:text="#{letter.public}">Burn after reading</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-6 col-md-6">
+                        <div class="col-xs-6 col-md-6" th:text="#{letter.create_date}">
                             Created
                         </div>
-                        <div class="col-xs-6 col-md-6">
+                        <div class="col-xs-6 col-md-6" th:text="#{letter.exp_date}">
                             Expire date
                         </div>
                     </div>
@@ -107,7 +107,7 @@
 
 
                     <div>
-                        <a th:href="@{/}">Create one more letter!</a>
+                        <a th:href="@{/}" th:text="#{letter.create_one_more}">Create one more letter!</a>
                     </div>
                 </div>
             </div>

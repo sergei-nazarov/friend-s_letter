@@ -65,7 +65,7 @@ public class LocalMessageStorage implements MessageStorage {
         try {
             return Files.newInputStream(filePath, StandardOpenOption.READ);
         } catch (IOException e) {
-            throw new FileNotFoundException(filePath.toString()); //todo handle file not found
+            throw new FileNotFoundException(filePath.toString());
         }
     }
 

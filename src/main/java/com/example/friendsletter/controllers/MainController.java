@@ -35,6 +35,7 @@ public class MainController {
         letterDto.setTimezone(timezone.getID());
         model.addAttribute("letter", letterDto);
         return "index";
+
     }
 
     @PostMapping
