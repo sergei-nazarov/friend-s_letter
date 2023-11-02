@@ -6,18 +6,23 @@ import com.example.friendsletter.data.LetterDto;
 import com.example.friendsletter.data.LetterWithCountVisits;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import org.springframework.data.domain.PageRequest;
+import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.beans.Transient;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("api1")
+@Tag(name = "Friend's letter", description = "publish and read letters")
 public class ApiController {
     final private LetterService letterService;
 
@@ -25,31 +30,34 @@ public class ApiController {
         this.letterService = letterService;
     }
 
-
+    @Operation(summary = "Get list of latest letters")
     @GetMapping("/letters")
-    Slice<Letter> getPublicLetters(
-            @RequestParam(value = "offset", defaultValue = "0", required = false) @Min(0) int offset,
-            @RequestParam(value = "limit", defaultValue = "10", required = false) @Max(100) int limit) {
-        return letterService.getPublicLetters(PageRequest.of(offset, limit));
+    Slice<Letter> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+        return letterService.getPublicLetters(pageable);
     }
 
+    @Operation(summary = "Get list of the most popular public letters")
     @GetMapping("/letters/most-popular")
-    @Transient
-    List<LetterWithCountVisits> getMostPopular(
-            @RequestParam(value = "offset", defaultValue = "0", required = false) @Min(0) int offset,
-            @RequestParam(value = "limit", defaultValue = "10", required = false) @Max(100) int limit
-    ) {
-        return letterService.getMostPopular(PageRequest.of(offset, limit));
+    List<LetterWithCountVisits> getMostPopular(@ParameterObject Pageable pageable) {
+        return letterService.getMostPopular(pageable);
     }
 
+    @Operation(summary = "Read the letter")
     @GetMapping("/letter/{shortLetterCode}")
     LetterDto getLetterInfo(@PathVariable String shortLetterCode,
-                            HttpServletRequest request)
+                            HttpServletRequest request, TimeZone tz)
             throws LetterNotAvailableException {
         LetterDto letterDto = letterService.readLetter(shortLetterCode);
-        //todo fix timezones to utc
+        letterDto.setTimezone(tz.getID());
         letterService.writeVisit(letterDto.getLetterShortCode(), request.getRemoteAddr());
         return letterDto;
     }
 
+    @Operation(summary = "Save the letter and get its id")
+    @PostMapping("/letter")
+    LetterDto saveLetter(@Valid @RequestBody LetterDto letterDto, TimeZone tz) {
+        letterDto.setTimezone(tz.getID());
+        return letterService.saveLetter(letterDto);
+    }
 }
