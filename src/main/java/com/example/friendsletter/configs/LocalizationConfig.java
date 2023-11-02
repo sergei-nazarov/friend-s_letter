@@ -43,7 +43,11 @@ public class LocalizationConfig implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
         slr.setDefaultLocaleFunction(req -> {
-            List<Locale.LanguageRange> list = Locale.LanguageRange.parse(req.getHeader("Accept-Language"));
+            String acceptLanguage = req.getHeader("Accept-Language");
+            if (acceptLanguage == null) {
+                return Locale.ENGLISH;
+            }
+            List<Locale.LanguageRange> list = Locale.LanguageRange.parse(acceptLanguage);
             List<Locale> availableLocales = List.of(Locale.ENGLISH, Locale.US,
                     Locale.FRANCE, new Locale("fr"), Locale.forLanguageTag("ru"), Locale.forLanguageTag("ru-ru"));
             Locale result = Locale.lookup(list, availableLocales);
@@ -55,5 +59,6 @@ public class LocalizationConfig implements WebMvcConfigurer {
 
         return slr;
     }
+
 
 }
