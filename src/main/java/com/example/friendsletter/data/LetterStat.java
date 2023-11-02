@@ -1,8 +1,10 @@
 package com.example.friendsletter.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +22,12 @@ public class LetterStat {
     private LocalDateTime visitTimestamp;
     private String ip;
     private String letterShortCode;
+
+    @ManyToOne
+    @JoinColumn(name = "letterShortCode", referencedColumnName = "letterShortCode", insertable = false, updatable = false)
+    @ToString.Exclude
+    @JsonIgnore
+    private Letter letter;
 
     public LetterStat(LocalDateTime visitTimestamp, String ip, String letterShortCode) {
         this.visitTimestamp = visitTimestamp;

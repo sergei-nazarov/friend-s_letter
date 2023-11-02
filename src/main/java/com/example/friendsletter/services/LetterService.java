@@ -1,9 +1,6 @@
 package com.example.friendsletter.services;
 
-import com.example.friendsletter.data.Letter;
-import com.example.friendsletter.data.LetterDto;
-import com.example.friendsletter.data.LetterStat;
-import com.example.friendsletter.data.MessageCacheDto;
+import com.example.friendsletter.data.*;
 import com.example.friendsletter.errors.LETTER_ERROR_STATUS;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.repository.LetterRepository;
@@ -13,12 +10,15 @@ import com.example.friendsletter.services.messages.MessageStorage;
 import com.example.friendsletter.services.url.SequenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
@@ -126,5 +126,13 @@ public class LetterService {
 
     public LocalDateTime fromUtc(LocalDateTime dateTime, String zoneId) {
         return fromUtc(dateTime, ZoneId.of(zoneId));
+    }
+
+    public Slice<Letter> getPublicLetters(Pageable pageable) {
+        return letterRepository.findAllByPublicLetterIs(true, pageable);
+    }
+
+    public List<LetterWithCountVisits> getMostPopular(Pageable pageable) {
+        return letterRepository.getPopular(pageable);
     }
 }

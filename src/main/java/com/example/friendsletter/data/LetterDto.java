@@ -1,5 +1,6 @@
 package com.example.friendsletter.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class LetterDto {
     private LocalDateTime expirationDate;
     private boolean singleUse;
     private boolean publicLetter;
+    @JsonIgnore
     private String timezone;
     private LocalDateTime created;
     private String letterShortCode;

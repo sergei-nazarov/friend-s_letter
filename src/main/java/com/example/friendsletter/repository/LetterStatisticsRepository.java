@@ -7,4 +7,5 @@ public interface LetterStatisticsRepository extends JpaRepository<LetterStat, Lo
 
     int countAllByLetterShortCodeIs(String messageShortCode);
 
+
 }
