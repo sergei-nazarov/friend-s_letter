@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component
-@Profile("prod")
+@Profile({"prod", "prod-docker"})
 @Slf4j
 public class GoogleDriveMessageStorage implements MessageStorage {
     private static final int ID_CAPACITY = 3;//I don't want to request a lot of ids from Google

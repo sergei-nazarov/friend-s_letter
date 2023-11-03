@@ -10,7 +10,7 @@ import redis.clients.jedis.JedisPool;
 import java.util.Optional;
 
 @Component
-@Profile("prod")
+@Profile({"prod", "prod-docker"})
 public class RedisMessageCache implements MessageCache {
     private final RedisMessageRepository redisMessageRepository;
 

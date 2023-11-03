@@ -1,0 +1,46 @@
+version: '2'
+services:
+  friendsletter:
+    image: sergeinazarov/friendsletter:latest
+    ports:
+      - 80:8080
+    environment:
+      - spring_profiles_active=prod-docker
+      - JAVA_OPTS="-XX:+UseContainerSupport"
+      - CATALINA_OPTS=""
+    networks:
+      - spring-cloud-network
+    volumes:
+      - ./logs:/workspace/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 700M
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: lettersstorage
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - spring-cloud-network
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    #    ports:
+    #      - '6379:6379'
+    volumes:
+      - ./cache:/data
+
+    networks:
+      - spring-cloud-network
+
+networks:
+  spring-cloud-network:
+    driver: bridge
+
+

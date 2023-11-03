@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("prod")
+@Profile({"prod", "prod-docker"})
 public interface RedisMessageRepository extends CrudRepository<MessageCacheDto, String> {
 }
