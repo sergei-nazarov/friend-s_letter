@@ -39,6 +39,7 @@
     }
 
 </script>
+
 <style>
     .form-control {
         margin-bottom: 13px
@@ -108,8 +109,10 @@
                     </div>
 
 
-                    <div>
-                        <a th:href="@{/}" th:text="#{letter.create_one_more}">Create one more letter!</a>
+                    <div class="row">
+                        <a class="col-xs-6 col-md-6" th:href="@{/}" th:text="#{letter.create_one_more}">Create one more
+                            letter!</a>
+                        <span class="col-xs-6 col-md-6" id="timezone" th:text="${letter.timeZone}"></span>
                     </div>
                 </div>
             </div>

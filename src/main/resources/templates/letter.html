@@ -28,6 +28,51 @@
 </style>
 
 <body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var created = new Date("[[${#temporals.formatISO(letter.created)}]]")
+        var expiration_date = new Date("[[${#temporals.formatISO(letter.expirationDate)}]]")
+        var date_timezone = "[[${letter.timeZone}]]"
+
+        var user_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+        function changeTimeZone(date, timeZone) {
+            return new Date(
+                date.toLocaleString('en-US', {
+                    timeZone,
+                }),
+            );
+        }
+
+        function parseDate(date) {
+            const utc = new Date(Date.UTC(date.getFullYear(),
+                date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+            day = utc.getDate()
+            month = utc.getMonth() + 1
+            year = utc.getFullYear()
+            hour = utc.getHours()
+            minute = utc.getMinutes()
+            console.log(day)
+            console.log(utc)
+            result = (day).toString().padStart(2, "0") + "-" +
+                (month).toString().padStart(2, "0") + "-" +
+                year + " " + " " + (hour).toString().padStart(2, "0") +
+                ":" + (minute).toString().padStart(2, "0")
+            return result
+        }
+
+        document.getElementById("time1").textContent = parseDate(created)
+        document.getElementById("time2").textContent = parseDate(expiration_date)
+        document.getElementById("timezone").textContent = user_timezone
+
+    });
+</script>
+
+
 <div class="parent">
     <div class="container">
         <div class="row">
@@ -65,16 +110,20 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 col-md-6" th:text="*{#temporals.format(created,'dd-MM-yyyy HH:mm')} ">
+                        <div class="col-xs-6 col-md-6" id="time1"
+                        >
                         </div>
-                        <div class="col-xs-6 col-md-6"
-                             th:text="*{#temporals.format(expirationDate,'dd-MM-yyyy HH:mm')} ">
+                        <div class="col-xs-6 col-md-6" id="time2"
+                        >
                         </div>
                     </div>
 
 
-                    <div>
-                        <a th:href="@{/}" th:text="#{letter.create_you_own}">Create your letter!</a>
+                    <div class="row">
+                        <a class="col-xs-6 col-md-6" th:href="@{/}" th:text="#{letter.create_you_own}">Create your
+                            letter!</a>
+                        <span class="col-xs-6 col-md-6" id="timezone"></span>
+                        </span>
                     </div>
                 </div>
             </div>

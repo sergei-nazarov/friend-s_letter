@@ -2,7 +2,8 @@ package com.example.friendsletter.controllers;
 
 
 import com.example.friendsletter.data.Letter;
-import com.example.friendsletter.data.LetterDto;
+import com.example.friendsletter.data.LetterRequestDto;
+import com.example.friendsletter.data.LetterResponseDto;
 import com.example.friendsletter.data.LetterWithCountVisits;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
@@ -18,7 +19,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.TimeZone;
 
 @RestController
 @RequestMapping("api1")
@@ -45,19 +45,19 @@ public class ApiController {
 
     @Operation(summary = "Read the letter")
     @GetMapping("/letter/{shortLetterCode}")
-    LetterDto getLetterInfo(@PathVariable String shortLetterCode,
-                            HttpServletRequest request, TimeZone tz)
+    LetterResponseDto getLetterInfo(@PathVariable String shortLetterCode,
+                                    HttpServletRequest request)
             throws LetterNotAvailableException {
-        LetterDto letterDto = letterService.readLetter(shortLetterCode);
-        letterDto.setTimezone(tz.getID());
+        LetterResponseDto letterDto = letterService.readLetter(shortLetterCode);
         letterService.writeVisit(letterDto.getLetterShortCode(), request.getRemoteAddr());
         return letterDto;
     }
 
-    @Operation(summary = "Save the letter and get its id")
+    @Operation(summary = "Save the letter and get its id",
+            description = "Timezone in format Asia/Jakarta. Default timezone is UTC. " +
+                    "Expiration date must be in the future")
     @PostMapping("/letter")
-    LetterDto saveLetter(@Valid @RequestBody LetterDto letterDto, TimeZone tz) {
-        letterDto.setTimezone(tz.getID());
+    LetterResponseDto saveLetter(@Valid @RequestBody LetterRequestDto letterDto) {
         return letterService.saveLetter(letterDto);
     }
 }

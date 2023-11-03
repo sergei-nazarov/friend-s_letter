@@ -17,16 +17,16 @@ import org.springframework.stereotype.Component;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component
 @Slf4j
 public class LetterService {
+    private static final ZoneId UTC = ZoneId.of("UTC");
     private final MessageStorage messageStorage;
     private final MessageCache messageCache;
     private final SequenceGenerator urlGenerator;
@@ -34,6 +34,7 @@ public class LetterService {
     private final LetterStatisticsRepository letterStatRepository;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
     @Autowired
     public LetterService(MessageStorage messageStorage, MessageCache messageCache,
@@ -46,7 +47,7 @@ public class LetterService {
         this.letterStatRepository = letterStatRepository;
     }
 
-    public LetterDto saveLetter(LetterDto letterDto) {
+    public LetterResponseDto saveLetter(LetterRequestDto letterDto) {
         String message = letterDto.getMessage();
         String letterShortCode = urlGenerator.generate();
 
@@ -54,25 +55,32 @@ public class LetterService {
         String messageId = messageStorage.save(message);
         messageCache.set(new MessageCacheDto(messageId, message));
 
-        LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), letterDto.getTimezone());
+        ZoneId tz;
+        try {
+            tz = ZoneId.of(letterDto.getTimeZone());
+        } catch (Exception ignore) {
+            tz = UTC;
+        }
+
+        LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), tz);
+        LocalDateTime created = LocalDateTime.now(tz);
         Letter letter = new Letter(letterShortCode, messageId,
-                utcExpDate, letterDto.isSingleUse(), letterDto.isPublicLetter());
+                utcExpDate, toUtc(created, tz), letterDto.isSingleUse(), letterDto.isPublicLetter());
         letterRepository.save(letter);
 
-        return new LetterDto(letterDto.getMessage(),
-                fromUtc(utcExpDate, letterDto.getTimezone()), letter.isSingleUse(),
-                letter.isPublicLetter(), letterDto.getTimezone(),
-                fromUtc(letter.getCreated(), letterDto.getTimezone()), letterShortCode);
+        return new LetterResponseDto(letterDto.getMessage(),
+                letterShortCode, created, fromUtc(utcExpDate, tz),
+                tz.getId(), letter.isSingleUse(), letter.isPublicLetter());
     }
 
-    public LetterDto readLetter(String letterShortCode) throws LetterNotAvailableException {
+    public LetterResponseDto readLetter(String letterShortCode) throws LetterNotAvailableException {
 
         Optional<Letter> letterOptional = letterRepository.findByLetterShortCode(letterShortCode);
         if (letterOptional.isEmpty()) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.NOT_FOUND);
         }
         Letter letter = letterOptional.get();
-        if (LocalDateTime.now(ZoneOffset.UTC).isAfter(letter.getExpirationDate())) {
+        if (LocalDateTime.now(UTC).isAfter(letter.getExpirationDate())) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.EXPIRED);
         } else if (letter.isSingleUse() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
@@ -92,40 +100,42 @@ public class LetterService {
         } catch (FileNotFoundException e) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.MESSAGE_NOT_FOUND);
         }
-        return new LetterDto(message, letter.getExpirationDate(), letter.isSingleUse(),
-                letter.isPublicLetter(), null, letter.getCreated(), letterShortCode);
+        return new LetterResponseDto(message, letterShortCode, letter.getCreated(),
+                letter.getExpirationDate(), UTC.getId(),
+                letter.isSingleUse(), letter.isPublicLetter());
     }
 
     public void writeVisit(String letterShortCode, String ip) {
         executor.execute(() -> {
             LetterStat letterStat = new LetterStat(
-                    LocalDateTime.now(ZoneOffset.UTC), ip, letterShortCode);
+                    LocalDateTime.now(UTC), ip, letterShortCode);
             letterStatRepository.save(letterStat);
         });
     }
 
-    public LocalDateTime toUtc(LocalDateTime dateTime, String zoneId) {
+    public LocalDateTime toUtc(LocalDateTime dateTime, ZoneId timeZone) {
+        if (dateTime == null) {
+            return LocalDateTime.of(2100, 1, 1, 0, 0, 0);
+        }
+        return dateTime.atZone(timeZone)
+                .withZoneSameInstant(UTC).toLocalDateTime();
+    }
+
+    public LocalDateTime toNotNull(LocalDateTime dateTime) {
         if (dateTime == null) {
             return LocalDateTime.of(2100, 1, 1, 0, 0);
         }
-        return dateTime.atZone(ZoneId.of(zoneId))
-                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        return dateTime;
+
     }
 
-    public LocalDateTime fromUtc(LocalDateTime dateTime, ZoneId zoneId) {
+    public LocalDateTime fromUtc(LocalDateTime dateTime, ZoneId timeZone) {
         if (dateTime == null) {
-            return LocalDateTime.of(2100, 1, 1, 0, 0);
+            return ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, UTC)
+                    .withZoneSameInstant(timeZone).toLocalDateTime();
         }
-        return dateTime.atZone(ZoneOffset.UTC)
-                .withZoneSameInstant(zoneId).toLocalDateTime();
-    }
-
-    public LocalDateTime fromUtc(LocalDateTime dateTime, TimeZone timeZone) {
-        return fromUtc(dateTime, timeZone.toZoneId());
-    }
-
-    public LocalDateTime fromUtc(LocalDateTime dateTime, String zoneId) {
-        return fromUtc(dateTime, ZoneId.of(zoneId));
+        return dateTime.atZone(UTC)
+                .withZoneSameInstant(timeZone).toLocalDateTime();
     }
 
     public Slice<Letter> getPublicLetters(Pageable pageable) {

@@ -1,0 +1,21 @@
+package com.example.friendsletter.data;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LetterResponseDto {
+
+    private String message;
+    private String letterShortCode;
+    private LocalDateTime created;
+    private LocalDateTime expirationDate;
+    private String timeZone;
+    private boolean singleUse;
+    private boolean publicLetter;
+}

@@ -8,7 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -37,12 +36,12 @@ public class Letter {
     private String messageId;
 
     //Lombok can't exclude field from @AllArgsConstructor, so...
-    public Letter(String letterShortCode, String messageId, LocalDateTime expirationDate, boolean singleUse, boolean publicLetter) {
+    public Letter(String letterShortCode, String messageId, LocalDateTime expirationDate, LocalDateTime created, boolean singleUse, boolean publicLetter) {
         this.letterShortCode = letterShortCode;
         this.messageId = messageId;
         this.expirationDate = expirationDate;
         this.singleUse = singleUse;
         this.publicLetter = publicLetter;
-        this.created = LocalDateTime.now(ZoneOffset.UTC);
+        this.created = created;
     }
 }

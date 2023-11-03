@@ -1,6 +1,5 @@
 package com.example.friendsletter.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,17 +12,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LetterDto {
+public class LetterRequestDto {
 
     @Size(message = "Letter too big. Max 2147483647 symbols")
     @NotBlank(message = "Message is mandatory")
     private String message;
     @Future(message = "Expiration date must be in the future")
     private LocalDateTime expirationDate;
+    private String timeZone;
     private boolean singleUse;
     private boolean publicLetter;
-    @JsonIgnore
-    private String timezone;
-    private LocalDateTime created;
-    private String letterShortCode;
 }

@@ -18,6 +18,10 @@
                 window.location.replace('?lang=' + selectedOption);
             }
         });
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+        document.getElementById("TimezoneField").value = tz
+        document.getElementById("TimezoneText").textContent = tz
+
     });
 </script>
 
@@ -81,11 +85,11 @@
                                     <input th:field="*{expirationDate}" type="datetime-local"/>
                                 </label>
                             </div>
-                            <div class="col-xs-6 col-md-6" th:text="*{timezone}">
+                            <div class="col-xs-6 col-md-6" id="TimezoneText">
                             </div>
 
                             <label>
-                                <input th:field="*{timezone}" type="hidden">
+                                <input id="TimezoneField" th:name="timeZone" type="hidden">
                             </label>
                         </div>
                         <div class="text-danger" th:errors="*{expirationDate}"
