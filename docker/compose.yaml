@@ -10,6 +10,7 @@ services:
       - spring_profiles_active=prod-docker
       - JAVA_OPTS="-XX:+UseContainerSupport"
       - CATALINA_OPTS=""
+      - POSTGRES_PASSWORD
     networks:
       - spring-cloud-network
     volumes:
