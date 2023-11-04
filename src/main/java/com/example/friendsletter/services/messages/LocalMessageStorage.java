@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+/**
+ * Local message store. For development purpose
+ */
 @Component
 @Profile("dev")
 public class LocalMessageStorage implements MessageStorage {

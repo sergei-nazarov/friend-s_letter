@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * The most simple uuid generator for creating letterShortCode
+ */
 @Component
 public class UuidUrlGenerator implements SequenceGenerator {
 

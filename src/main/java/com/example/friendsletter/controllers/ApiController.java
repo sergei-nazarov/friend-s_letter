@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * API Controller
+ */
 @RestController
 @RequestMapping("api1")
 @Tag(name = "Friend's letter", description = "publish and read letters")
@@ -30,7 +33,7 @@ public class ApiController {
         this.letterService = letterService;
     }
 
-    @Operation(summary = "Get list of latest letters")
+    @Operation(summary = "Get list of the latest letters")
     @GetMapping("/letters")
     Slice<Letter> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
             direction = Sort.Direction.DESC) Pageable pageable) {
@@ -54,7 +57,7 @@ public class ApiController {
     }
 
     @Operation(summary = "Save the letter and get its id",
-            description = "Timezone in format Asia/Jakarta. Default timezone is UTC. " +
+            description = "Timezone in format like Asia/Jakarta. Default timezone is UTC. " +
                     "Expiration date must be in the future")
     @PostMapping("/letter")
     LetterResponseDto saveLetter(@Valid @RequestBody LetterRequestDto letterDto) {

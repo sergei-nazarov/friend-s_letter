@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Mock
+ */
 @Component
 @Profile("dev")
 public class NoMessageCache implements MessageCache {
-
 
     @Override
     public Optional<MessageCacheDto> get(String shortLetterCode) {

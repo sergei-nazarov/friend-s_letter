@@ -4,6 +4,9 @@ import com.example.friendsletter.data.MessageCacheDto;
 
 import java.util.Optional;
 
+/**
+ * Interface for different message cache classes
+ */
 public interface MessageCache {
     Optional<MessageCacheDto> get(String shortLetterCode);
 

@@ -13,32 +13,20 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Config for localization
+ */
 @Configuration
 public class LocalizationConfig implements WebMvcConfigurer {
 
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:messages");
-        messageSource.setFallbackToSystemLocale(false);
-        messageSource.setCacheSeconds(1800);
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
-    }
-
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        return lci;
-    }
-
-    //SessionLocaleResolver
+    /**
+     * Bean for locale resolving
+     * Locale is held in session.
+     * First, the locale is determined by the http Accept-Language header.
+     * If there is no Accept-Language header in the request or there are no
+     * supported languages in the application, the default is ENGLISH.
+     * Header example - "ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7"
+     */
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
@@ -60,5 +48,31 @@ public class LocalizationConfig implements WebMvcConfigurer {
         return slr;
     }
 
+
+    /**
+     * Bean for message source.
+     * Files starting with "messages..." are used.
+     */
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setFallbackToSystemLocale(false);
+        messageSource.setCacheSeconds(1800);
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
+    }
 
 }

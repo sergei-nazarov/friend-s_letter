@@ -23,6 +23,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Main letter service
+ */
 @Component
 @Slf4j
 public class LetterService {
@@ -47,6 +50,11 @@ public class LetterService {
         this.letterStatRepository = letterStatRepository;
     }
 
+    /**
+     * @param letterDto - message info to save
+     * @return response with letterShortCode
+     * Letter metadata will be stored in DB, message in messageStore and in cache
+     */
     public LetterResponseDto saveLetter(LetterRequestDto letterDto) {
         String message = letterDto.getMessage();
         String letterShortCode = urlGenerator.generate();
@@ -73,11 +81,18 @@ public class LetterService {
                 tz.getId(), letter.isSingleUse(), letter.isPublicLetter());
     }
 
+    /**
+     * @param letterShortCode - letterShortCode
+     * @return Data for displaying letter
+     * Read the message in the letter. The message will be searched in the cache first.
+     * If it is not found, it will be requested in messageStore
+     * @throws LetterNotAvailableException - different errors with letter.
+     */
     public LetterResponseDto readLetter(String letterShortCode) throws LetterNotAvailableException {
 
         Optional<Letter> letterOptional = letterRepository.findByLetterShortCode(letterShortCode);
         if (letterOptional.isEmpty()) {
-            throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.NOT_FOUND);
+            throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.LETTER_NOT_FOUND);
         }
         Letter letter = letterOptional.get();
         if (LocalDateTime.now(UTC).isAfter(letter.getExpirationDate())) {
@@ -105,6 +120,9 @@ public class LetterService {
                 letter.isSingleUse(), letter.isPublicLetter());
     }
 
+    /**
+     * Write letter visit to DB
+     */
     public void writeVisit(String letterShortCode, String ip) {
         executor.execute(() -> {
             LetterStat letterStat = new LetterStat(
@@ -121,14 +139,6 @@ public class LetterService {
                 .withZoneSameInstant(UTC).toLocalDateTime();
     }
 
-    public LocalDateTime toNotNull(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return LocalDateTime.of(2100, 1, 1, 0, 0);
-        }
-        return dateTime;
-
-    }
-
     public LocalDateTime fromUtc(LocalDateTime dateTime, ZoneId timeZone) {
         if (dateTime == null) {
             return ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, UTC)
@@ -138,10 +148,16 @@ public class LetterService {
                 .withZoneSameInstant(timeZone).toLocalDateTime();
     }
 
+    /**
+     * @return List of the public messages
+     */
     public Slice<Letter> getPublicLetters(Pageable pageable) {
         return letterRepository.findAllByPublicLetterIs(true, pageable);
     }
 
+    /**
+     * @return - List of the most popular letters with count of visits
+     */
     public List<LetterWithCountVisits> getMostPopular(Pageable pageable) {
         return letterRepository.getPopular(pageable);
     }

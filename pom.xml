@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>friendsletter</artifactId>
-    <version>0.1.0</version>
+    <version>latest</version>
     <name>friendsletter</name>
     <description>friendsletter</description>
     <properties>

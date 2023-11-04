@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Class for storing, reading, updating and deleting messages
+ */
 public interface MessageStorage {
     /**
      * Save the message in message store

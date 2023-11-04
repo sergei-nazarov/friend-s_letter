@@ -13,10 +13,6 @@ public class FriendsLetterApplication {
         //todo message qr code
         //todo redirect after post
         //todo rate limiter
-        //todo javadoc
-        //todo 404 handle
-        //todo different dto for create message
-        //todo docker and redis and postgres
 
         //list public messages
         //cache!!
@@ -26,8 +22,10 @@ public class FriendsLetterApplication {
         //message stats
         //copy letter button
         //localization en/fr/ru
-
-
+        //javadoc
+        //404 handle
+        //different dto for create message
+        //docker and redis and postgres
         SpringApplication.run(FriendsLetterApplication.class, args);
     }
 

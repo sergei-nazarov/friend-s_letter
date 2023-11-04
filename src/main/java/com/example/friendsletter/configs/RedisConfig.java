@@ -8,6 +8,9 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+/**
+ * Config for Redis.
+ */
 @Configuration
 @Profile({"prod", "prod-docker"})
 public class RedisConfig {

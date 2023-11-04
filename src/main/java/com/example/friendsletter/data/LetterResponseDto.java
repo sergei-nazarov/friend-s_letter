@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for displaying the letter
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

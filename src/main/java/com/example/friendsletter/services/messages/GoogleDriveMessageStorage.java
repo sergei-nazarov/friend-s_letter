@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,17 +33,31 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Storing messages in Google Drive
+ * To asynchronously save a file to google drive, you need to request some id's first.
+ * If you don't do this, you will have to wait for a response from
+ * Google Drive with a unique id. And this takes time.
+ * The unique id from the queue is taken to save the file.
+ * There is a separate thread that ensures that ids are always available in the queue.
+ * To maximize concurrency, the blocking method put is used (with no synchronization).
+ * If the queue is full, the thread waits for an opportunity to put an id.
+ * When thread itself runs out of ids, it requests some new ones from Google Drive
+ */
+@ThreadSafe
 @Component
 @Profile({"prod", "prod-docker"})
 @Slf4j
 public class GoogleDriveMessageStorage implements MessageStorage {
-    private static final int ID_CAPACITY = 3;//I don't want to request a lot of ids from Google
+    private static final int ID_QUEUE_CAPACITY = 3;//I don't want to request a lot of ids from Google
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    /**
+     * Folder name in Google Drive
+     */
     @Value("${messages.store.folder}")
     private String folderName;
-
-    private Drive service;
     private String folderId;
+    private Drive service;
     @Value("${spring.application.name}")
     private String APPLICATION_NAME;
     @Value("${messages.store.credential-path:/credentials.json}")
@@ -67,16 +82,19 @@ public class GoogleDriveMessageStorage implements MessageStorage {
         } catch (IOException | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
-        ids = new ArrayBlockingQueue<>(ID_CAPACITY);
+        ids = new ArrayBlockingQueue<>(ID_QUEUE_CAPACITY);
         runGoogleDriveIdRequester();
         findFolderId();
     }
 
+    /**
+     * Producer for id's queue.
+     */
     private void runGoogleDriveIdRequester() {
         new Thread(() -> {
             while (true) {
                 try {
-                    int requestCount = ID_CAPACITY + 1;
+                    int requestCount = ID_QUEUE_CAPACITY + 1;
                     log.info("Request " + requestCount + " file ids from Google Drive for storing messages");
                     List<String> newMessageIds = service.files().generateIds().setCount(requestCount).execute().getIds();
                     for (String newMessageId : newMessageIds) {
@@ -96,6 +114,13 @@ public class GoogleDriveMessageStorage implements MessageStorage {
         }, "Drive updater").start();
     }
 
+    /**
+     * @param message - message test to save
+     * @return unique message id
+     * Add a message to the save queue.
+     * Saving the message to GoogleDrive will execute in a separate thread via ExecutorService.
+     * Id for saving will be taken from the queue.
+     */
     @Override
     public String save(InputStream message) {
         try {

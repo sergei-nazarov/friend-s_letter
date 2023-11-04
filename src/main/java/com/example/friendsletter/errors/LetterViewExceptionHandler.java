@@ -10,6 +10,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Locale;
 
+/**
+ * Handlers for different VIEW errors
+ */
 @ControllerAdvice
 public class LetterViewExceptionHandler {
 
@@ -20,12 +23,16 @@ public class LetterViewExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    /**
+     * Method for handling letter's errors
+     * Redirect to the main page with an error message
+     */
     @ExceptionHandler(LetterNotAvailableException.class)
     public String handleException(LetterNotAvailableException e, RedirectAttributes redirectAttributes) {
         LETTER_ERROR_STATUS status = e.getStatus();
         String key;
         switch (status) {
-            case NOT_FOUND -> key = "read.error.not_found";
+            case LETTER_NOT_FOUND -> key = "read.error.not_found";
             case NOT_PUBLIC -> key = "read.error.not_public";
             case EXPIRED -> key = "read.error.expired";
             case HAS_BEEN_READ -> key = "read.error.has_been_read";
@@ -40,7 +47,6 @@ public class LetterViewExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handleIOException(NoHandlerFoundException error, RedirectAttributes redirectAttributes) {
-        System.out.println(123);
         Locale locale = LocaleContextHolder.getLocale();
         String errorMessage = messageSource.getMessage("error.not_found", new String[]{error.getRequestURL()}, locale);
         redirectAttributes.addFlashAttribute("errorMessage", errorMessage);

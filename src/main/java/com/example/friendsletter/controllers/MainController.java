@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+/**
+ * View controller
+ */
 @Controller
 @Slf4j
 public class MainController {
@@ -57,6 +60,9 @@ public class MainController {
         return "letter";
     }
 
+    /**
+     * @return current HOST name
+     */
     @ModelAttribute("serverHost")
     String getRequestServletPath() {
         return ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();

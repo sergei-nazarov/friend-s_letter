@@ -8,6 +8,9 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity for saving visit statistics
+ */
 @Entity
 @Table(name = "letters_stat")
 @Getter

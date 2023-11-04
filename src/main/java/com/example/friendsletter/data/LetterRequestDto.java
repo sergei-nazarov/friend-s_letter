@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for creating a letter
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
