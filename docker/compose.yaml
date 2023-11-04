@@ -24,10 +24,12 @@ services:
     restart: always
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD:
       POSTGRES_DB: lettersstorage
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
     networks:
       - spring-cloud-network
   cache:
