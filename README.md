@@ -1,6 +1,6 @@
 **Описание проекта:**
 
-Friend's Letter - это веб-сервис, который позволяет пользователям создавать и обмениваться письмами в удобной среде. Аналог Pastebin. Сервис создан с использованием современных технологий и инструментов разработки, включая Spring Boot, Spring Web, Spring Data, Thymeleaf, OpenAPI (Swagger), Lombok, Actuator, Spring Security, Liquibase, HTML и JavaScript. При развертывании и управлении приложением используется Docker Compose для упрощения управления контейнеров.
+Friend's Letter - это веб-сервис, который позволяет пользователям создавать и обмениваться письмами в удобной среде. Сервис создан с использованием современных технологий и инструментов разработки, включая Spring Boot, Spring Web, Spring Data, Thymeleaf, OpenAPI (Swagger), Lombok, Actuator, Spring Security, Liquibase, HTML и JavaScript. При развертывании и управлении приложением используется Docker Compose для упрощения управления контейнеров.
 
 
 **Доступность:**
