@@ -20,9 +20,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("actuator.login")
+    @Value("${actuator.login}")
     private String login;
-    @Value("actuator.password")
+    @Value("${actuator.password}")
     private String password;
 
     @Bean
