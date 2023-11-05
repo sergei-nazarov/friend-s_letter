@@ -11,6 +11,7 @@ services:
       - JAVA_OPTS="-XX:+UseContainerSupport"
       - CATALINA_OPTS=""
       - POSTGRES_PASSWORD
+      - ACTUATOR_PASSWORD
     networks:
       - spring-cloud-network
     volumes:
