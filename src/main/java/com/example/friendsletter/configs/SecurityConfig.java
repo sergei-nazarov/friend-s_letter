@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,10 +24,6 @@ public class SecurityConfig {
     private String login;
     @Value("actuator.password")
     private String password;
-
-    public static void main(String[] args) {
-        System.out.println(new BCryptPasswordEncoder().encode("qwertyQwerty12345"));
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,7 +44,8 @@ public class SecurityConfig {
                         .authenticated()
                         .anyRequest()
                         .permitAll()
-                ).httpBasic(withDefaults());
+                ).httpBasic(withDefaults())
+                .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
