@@ -13,6 +13,7 @@ public class FriendsLetterApplication {
         //todo message qr code
         //todo redirect after post
         //todo rate limiter
+        //todo single use bag
 
         //list public messages
         //cache!!
