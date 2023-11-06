@@ -1,34 +1,42 @@
-**Описание проекта:**
+**Description**
 
-Friend's Letter - это веб-сервис, который позволяет пользователям создавать и обмениваться письмами в удобной среде. Сервис создан с использованием современных технологий и инструментов разработки, включая Spring Boot, Spring Web, Spring Data, Thymeleaf, OpenAPI (Swagger), Lombok, Actuator, Spring Security, Liquibase, HTML и JavaScript. При развертывании и управлении приложением используется Docker Compose для упрощения управления контейнерами.
+Friend's Letter is a web service that allows users to create and exchange letters in a convenient environment. The
+service is created using modern development technologies and tools, including Spring Boot, Spring Web, Spring Data,
+Thymeleaf, OpenAPI (Swagger), Lombok, Actuator, Spring Security, Liquibase, HTML, and JavaScript. Docker Compose is used
+for deployment and application management to simplify container management.
 
+**Accessibility:**
 
-**Доступность:**
+Friend's Letter is available at http://sergeiprojects.ru/
 
-Friend's Letter доступен по адресу http://sergeiprojects.ru/
+API Documentation - http://sergeiprojects.ru/swagger-ui/index.html#/
 
-Документация API - http://sergeiprojects.ru/swagger-ui/index.html#/
+**Application Schema:**
 
-**Схема приложения**
+<img alt="The scheme of application" src="https://raw.githubusercontent.com/sergei-nazarov/friend-s_letter/main/scheme.jpg" width="600" height="400">
 
-<img src="https://raw.githubusercontent.com/sergei-nazarov/friend-s_letter/main/scheme.jpg" width="600" height="400">
+**Integration with External Services:**
 
+Google Drive: Used for message storage.
+PostgreSQL: As the main database for storing information.
+Redis: For caching messages and improving performance.
 
-**Интеграция с внешними сервисами:**
+**Project Features:**
 
-- Google Drive: Используется для хранения сообщений.
-- PostgreSQL: Как основная база данных для хранения информации.
-- Redis: Для кэширования сообщений и повышения производительности.
+1. **Message Creation and Exchange**: The core functionality of the project allows creating messages with additional
+   parameters, such as specifying a date when the message will become unavailable, making a message public, or setting a
+   limit on the number of views. When the recipient opens the link, they can see the sent message, ensuring
+   confidentiality and convenience in communication.
 
+2. **Asynchronous** Interaction with Google Drive: Messages in Google Drive are saved asynchronously. The ID for saving
+   future messages is requested in advance. This ensures instant responses and eliminates the need to wait for the
+   message to be saved on the server.
 
+3. **Full Localization**: The service fully supports three languages: Russian, French, and English. The language is
+   automatically detected based on the request header and is maintained within the user's session.
 
-**Особенности проекта:**
+4. **API with Documentation**: For developers' convenience, an API is provided that allows viewing the list of messages,
+   reading messages, and getting the most popular messages. This API is documented using OpenAPI, providing transparent
+   and comprehensible access to the functionality.
 
-1. **Создание и обмен сообщениями**: Основной функционал проекта заключается в возможности создания сообщений с дополнительными параметрами, такими как указание даты, когда сообщение станет недоступным, возможность сделать сообщение публичным или установить ограничение на количество прочтений. При открытии ссылки получатель видит отправленное сообщение, обеспечивая конфиденциальность и удобство общения.
-
-2. **Асинхронное взаимодействие с Google Drive**: Сообщения в Google Drive сохраняются асинхронно. Id для сохранения будущих сообщений запрашивается заранее. Это обеспечивает мгновенные ответы и устраняет необходимость ожидания сохранения письма на сервере.
-
-3. **Полная локализация**: Сервис полностью поддерживает три языка: русский, французский и английский. Язык определяется автоматически на основе заголовка запроса и сохраняется в рамках сессии пользователя.
-
-4. **API с документацией**: Для удобства разработчиков предоставлено API, которое позволяет просматривать список сообщений, читать сообщения и получать самые популярные. Это API документировано с использованием OpenAPI, обеспечивая прозрачный и понятный доступ к функциональности.
-
+[README also available in russian](https://github.com/sergei-nazarov/friend-s_letter/blob/main/README_RU.md)
