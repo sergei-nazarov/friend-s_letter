@@ -19,7 +19,7 @@ public class NoMessageCache implements MessageCache {
     }
 
     @Override
-    public void set(MessageCacheDto message) {
+    public void save(MessageCacheDto message) {
         //do nothing
     }
 }

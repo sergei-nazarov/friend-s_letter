@@ -61,7 +61,7 @@ public class LetterService {
 
         //put message in storage and cache
         String messageId = messageStorage.save(message);
-        messageCache.set(new MessageCacheDto(messageId, message));
+        messageCache.save(new MessageCacheDto(messageId, message));
 
         ZoneId tz;
         try {
@@ -100,21 +100,21 @@ public class LetterService {
         } else if (letter.isSingleUse() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
         }
-        String message;
         String messageId = letter.getMessageId();
-
         Optional<MessageCacheDto> cachedMessage = messageCache.get(messageId);
+        String message;
         try {
             if (cachedMessage.isPresent()) {
                 message = cachedMessage.get().getMessage();
                 log.info("Message with id " + messageId + " has been found in cache");
             } else {
                 message = messageStorage.read(messageId);
-                messageCache.set(new MessageCacheDto(messageId, message));
+                messageCache.save(new MessageCacheDto(messageId, message));
             }
         } catch (FileNotFoundException e) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.MESSAGE_NOT_FOUND);
         }
+
         return new LetterResponseDto(message, letterShortCode, letter.getCreated(),
                 letter.getExpirationDate(), UTC.getId(),
                 letter.isSingleUse(), letter.isPublicLetter());

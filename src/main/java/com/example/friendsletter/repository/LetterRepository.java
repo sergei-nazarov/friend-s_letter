@@ -2,6 +2,9 @@ package com.example.friendsletter.repository;
 
 import com.example.friendsletter.data.Letter;
 import com.example.friendsletter.data.LetterWithCountVisits;
+import lombok.NonNull;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +18,7 @@ import java.util.Optional;
  */
 public interface LetterRepository extends JpaRepository<Letter, String> {
 
+    @Cacheable(cacheNames = "letter")
     Optional<Letter> findByLetterShortCode(String letterShortCode);
 
     Slice<Letter> findAllByPublicLetterIs(boolean publicLetter, Pageable page);
@@ -27,6 +31,10 @@ public interface LetterRepository extends JpaRepository<Letter, String> {
             GROUP BY l
             ORDER BY count(v) DESC""")
     List<LetterWithCountVisits> getPopular(Pageable pageable);
+
+    @CachePut(cacheNames = "letter", key = "#entity.letterShortCode")
+    @Override
+    <S extends Letter> @NonNull S save(@NonNull S entity);
 
 
 }

@@ -49,7 +49,7 @@ import java.util.concurrent.Executors;
 @Profile({"prod", "prod-docker"})
 @Slf4j
 public class GoogleDriveMessageStorage implements MessageStorage {
-    private static final int ID_QUEUE_CAPACITY = 3;//I don't want to request a lot of ids from Google
+    private static final int ID_QUEUE_CAPACITY = 2;//I don't want to request a lot of ids from Google
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     /**
      * Folder name in Google Drive

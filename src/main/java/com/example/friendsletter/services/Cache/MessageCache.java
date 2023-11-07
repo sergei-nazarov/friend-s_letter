@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface MessageCache {
     Optional<MessageCacheDto> get(String shortLetterCode);
 
-    void set(MessageCacheDto message);
+    void save(MessageCacheDto message);
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "letters")
-public class Letter {
+public class Letter implements Serializable {
 
     @Id
     @Column(nullable = false)
@@ -50,7 +51,6 @@ public class Letter {
     /**
      * Message id in messageStore
      */
-    @JsonIgnore
     private String messageId;
 
 

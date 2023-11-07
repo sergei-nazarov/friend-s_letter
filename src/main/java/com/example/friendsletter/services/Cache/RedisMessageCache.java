@@ -25,7 +25,7 @@ public class RedisMessageCache implements MessageCache {
     }
 
     @Override
-    public void set(MessageCacheDto message) {
+    public void save(MessageCacheDto message) {
         redisMessageRepository.save(message);
     }
 }
