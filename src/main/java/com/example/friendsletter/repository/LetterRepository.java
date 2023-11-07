@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * Repository with Letter metadata
  */
-public interface LetterRepository extends JpaRepository<Letter, Long> {
+public interface LetterRepository extends JpaRepository<Letter, String> {
 
     Optional<Letter> findByLetterShortCode(String letterShortCode);
 

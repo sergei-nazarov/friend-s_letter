@@ -22,17 +22,13 @@ import java.util.List;
 public class Letter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "letter_gen")
-    @SequenceGenerator(name = "letter_gen", sequenceName = "letters_SEQ", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    @JsonIgnore
-    private Long id;
+    @Column(nullable = false)
+    private String letterShortCode;
 
     @OneToMany(mappedBy = "letter", fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
     List<LetterStat> visits;
-    private String letterShortCode;
     /**
      * If true, the message can only be read 1 time
      */
