@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bootstrap Admin Theme v3</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="../static/js/bootstrap-markdown.js"></script>
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+
+</head>
+<style>
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
+    }
+</style>
+<body>
+<div class="container">
+    <div class="header">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Friend's Letter</a>
+                <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                        class="navbar-toggler"
+                        data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                               role="button">
+                                Language
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">English</a></li>
+                                <li><a class="dropdown-item" href="#">Français</a></li>
+                                <li><a class="dropdown-item" href="#">Русский</a></li>
+
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="container">
+
+    <div class="album py-5 bg-body">
+        <div class="container">
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="col">
+                    <div class="card shadow-sm bg-body-tertiary">
+                        <form>
+                            <div class="mb-3">
+                                <div class="card-body">
+                                    <h4>Letter to your friends</h4>
+                                    <p class="card-text">You can write a letter to your friends here. Then, you'll be
+                                        able to share a link to this letter. Full Markdown language support.</p>
+                                </div>
+
+                                <textarea class="form-control mt-1 border border-primary" id="content"
+                                          oninput="render_md()"
+                                          placeholder="Start writing your letter here..." rows="6">
+## My dear friend **Pedro**
+I'm writing to you for...
+</textarea>
+                            </div>
+                            <div class="form-floating mb-3 border-primary">
+                                <input class="form-control" id="floatingInput" placeholder="name@example.com"
+                                       type="text">
+                                <label for="floatingInput">Theme</label>
+                            </div>
+                            <div class="form-floating">
+                                <input class="form-control" id="floatingPassword" placeholder="Password" type="text">
+                                <label for="floatingPassword">Your name</label>
+                            </div>
+
+                            <div class="card-body">
+                                <div>
+                                    <div class="form-check form-check-inline form-switch">
+                                        <input checked class="form-check-input" id="flexSwitchPublic"
+                                               role="switch" type="checkbox">
+                                        <label class="form-check-label" for="flexSwitchPublic">Public letter</label>
+                                    </div>
+                                    <div class="form-check form-check-inline form-switch">
+                                        <input class="form-check-input" id="flexSwitchSingleUse" role="switch"
+                                               type="checkbox">
+                                        <label class="form-check-label" for="flexSwitchSingleUse">Burn after
+                                            reading</label>
+                                    </div>
+                                    <div class="m-2">
+                                        <input id="expiry" th:field="*{expirationDate}" type="datetime-local"/>
+                                        <label class="form-check-label" for="expiry">Expiration date</label>
+                                    </div>
+                                    <input id="TimezoneField" th:name="timeZone" type="hidden">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-lg btn-primary"
+                                                th:text="#{letter.generate_url}"
+                                                type="submit">Generate url
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm bg-body-tertiary">
+                        <div class="card-body">
+                            <h4>Letter preview</h4>
+                            <p class="card-text">You can see how your letter is looking in realtime</p>
+                            <hr/>
+                            <div id="md_preview"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4>The most popular letters</h4>
+                            <p class="card-text">List of letters with the most reads</p>
+                            <hr/>
+                            <div>
+                                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                                   href="#">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <strong class="mb-1">Letter title </strong>
+                                        <small>2023-12-11 10:38</small>
+                                    </div>
+                                    <div class="col-10 mb-1 small">Hello my dear friend pedro...
+                                    </div>
+                                </a>
+                                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                                   href="#">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <strong class="mb-1">Letter title </strong>
+                                        <small>2023-12-11 10:38</small>
+                                    </div>
+                                    <div class="col-10 mb-1 small">Hello my dear friend pedro...
+                                    </div>
+                                </a>
+                                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                                   href="#">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <strong class="mb-1">Letter title </strong>
+                                        <small>2023-12-11 10:38</small>
+                                    </div>
+                                    <div class="col-10 mb-1 small">Hello my dear friend pedro...
+                                    </div>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <div class="container">
+                    <div class="copy text-center">
+                        Timezone <span id="tz">Asia/Tbilisi</span>
+                    </div>
+
+                    <div class="copy text-center">
+                        Copyright 2024 <a href='#'>Website</a>
+                    </div>
+
+                </div>
+            </footer>
+
+            <script crossorigin="anonymous"
+                    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                var converter;
+                document.addEventListener('DOMContentLoaded', function () {
+                    converter = new showdown.Converter();
+                    $('#content').markdown({
+                        hiddenButtons: ['cmdPreview', 'fullscreen'],
+                        resize: 'vertical',
+                        fullscreen: {enable: false}
+                    });
+                    render_md();
+                    document.getElementById("tz").value = Intl.DateTimeFormat().resolvedOptions().timeZone
+                });
+
+                function render_md() {
+                    let content = document.querySelector('#content').value;
+                    document.querySelector('#md_preview').innerHTML = converter.makeHtml(content)
+                }
+
+            </script>
+
+</body>
+</html>

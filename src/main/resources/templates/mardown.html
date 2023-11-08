@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    var converter;
+    document.addEventListener('DOMContentLoaded', function () {
+        converter = new showdown.Converter();
+    });
+
+    function printMd() {
+        let content = document.getElementById('text').value;
+        console.log(content)
+        console.log()
+        let res = converter.makeHtml(content);
+        console.log(res);
+        document.querySelector('#div').innerHTML = res
+    }
+
+</script>
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+
+
+<textarea id="text" oninput="printMd()"> </textarea>
+<div id="div">
+
+</div>
+</body>
+</html>
