@@ -48,7 +48,7 @@ public class MainController {
         }
         LetterResponseDto letter = letterService.saveLetter(letterDto);
         model.addAttribute("letter", letter);
-        return "letter_created_new";
+        return "letter_created";
     }
 
     @GetMapping("/l/{letterShortCode}")

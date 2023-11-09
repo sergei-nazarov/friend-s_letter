@@ -1,126 +1,87 @@
 <!DOCTYPE html>
-<html lang="eng" xmlns:th="https://www.thymeleaf.org">
+<html>
 <head>
     <title th:text="#{site.headline.created}">Letter for you</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{/static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{/static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{/static/js/showdown.min.js}"></script>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
-
+    <script src="../static/js/created.js" th:src="@{/static/js/created.js}"></script>
 </head>
-<script>
-    function copyToBuffer() {
-        copyToClipboard(document.getElementById("urlToLetter").textContent);
-    }
-
-    async function copyToClipboard(textToCopy) {
-        // Navigator clipboard api needs a secure context (https)
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(textToCopy);
-        } else {
-            // Use the 'out of viewport hidden text area' trick
-            const textArea = document.createElement("textarea");
-            textArea.value = textToCopy;
-
-            // Move textarea out of the viewport so it's not visible
-            textArea.style.position = "absolute";
-            textArea.style.left = "-999999px";
-
-            document.body.prepend(textArea);
-            textArea.select();
-
-            try {
-                document.execCommand('copy');
-            } catch (error) {
-                console.error(error);
-            } finally {
-                textArea.remove();
-            }
-        }
-    }
-
-</script>
-
 <style>
-    .form-control {
-        margin-bottom: 13px
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
     }
 
-    .parent {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        align-content: center;
-        justify-content: center;
-        overflow: auto;
-        background-color: aliceblue;
+    .date-time {
     }
 </style>
 <body>
-<div class="parent">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 well well-sm">
+<div class="container-md" th:replace="~{fragments/header.html::header}">
+</div>
+<div class="container-xxl">
 
-                <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
-                <div th:object="${letter}">
-                    <label th:text="#{letter.available_url}">Letter available by url:</label>
-                    <p>
-                        <span id="urlToLetter" th:text="${serverHost} + '/l/' + *{letterShortCode}"></span>
-                        <button onclick="copyToBuffer()" th:text="#{letter.copy_url}">Copy url</button>
-                    </p>
+    <div class="album py-5 bg-body">
+        <div class="row row-cols-1 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 g-3">
+            <div class="col" th:object="${letter}">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="mb-3">
+                        <div class="card-body">
+                            <h4 th:text="#{letter.info}">Letter info</h4>
+                            <hr/>
+                            <div th:text="#{letter.available_url}">Letter is available at url:</div>
+                            <p class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1" id="letterUrl"
+                                        th:text="${serverHost} + '/l/' + *{letterShortCode}">www.sergeiprojects.ru/l/jdhtkr </strong>
+                                <button id="copyButton" th:text="#{letter.copy_url}">Copy url</button>
+                            </p>
 
-                    <textarea class="form-control" cols="25" disabled placeholder="Start writing..." required="required"
-                              rows="9" th:field="*{message}"></textarea>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12">
-                            <label>
-                                <input class="form-check-input" disabled th:field="*{isSingleRead}" type="checkbox"/>
-                                <span th:text="#{letter.burn}">Make letter public</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12">
-                            <label>
-                                <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
-                                <span th:text="#{letter.public}">Burn after reading</span>
-                            </label>
-                        </div>
-                    </div>
+                            <div th:replace="~{fragments/general_fragments.html::letter_info}">
+                            </div>
+                            <a href="#" th:href="@{/}" th:text="#{letter.create_one_more}">Create one more letter</a>
 
-                    <div class="row">
-                        <div class="col-xs-6 col-md-6" th:text="#{letter.created}">
-                            Created
                         </div>
-                        <div class="col-xs-6 col-md-6" th:text="#{letter.exp_date}">
-                            Expire date
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-6 col-md-6" th:text="*{#temporals.format(created,'dd-MM-yyyy HH:mm')} ">
-                        </div>
-                        <div class="col-xs-6 col-md-6"
-                             th:text="*{#temporals.format(expirationDate,'dd-MM-yyyy HH:mm')} ">
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <a class="col-xs-6 col-md-6" th:href="@{/}" th:text="#{letter.create_one_more}">Create one more
-                            letter!</a>
-                        <span class="col-xs-6 col-md-6" id="timezone" th:text="${letter.timeZone}"></span>
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="card-body">
+                        <h4 th:text="#{letter.was_created}">Letter created</h4>
+                        <hr/>
+
+                        <div id="md_preview" th:text="${letter.message}">
+                            <H1>Letter text</H1>
+                            <p>Sone ipsum dollar</p>
+                            <p>Sone ipsum dollar</p>
+                            <p>Sone ipsum dollar</p>
+                            <p>Sone ipsum dollar Sone ipsum dollar Sone ipsum dollar Sone ipsum dollar Sone ipsum
+                                dollar</p>
+                            <br/>
+                            <p>Sone ipsum dollar</p>
+                            <p>Sone ipsum dollar</p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" th:replace="~{fragments/popular.html::popular}">
+            </div>
+
         </div>
+
     </div>
 </div>
+
+<footer th:replace="~{fragments/footer.html::footer}">
+</footer>
+
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
 
 </body>
 </html>

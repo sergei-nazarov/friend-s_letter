@@ -115,17 +115,24 @@ public class LetterService {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.MESSAGE_NOT_FOUND);
         }
 
-        return null;//todo
+        return letter.toLetterResponseDto(message);
     }
 
     /**
      * Write letter visit to DB
+     * Write only if there are no visits for last 5 minutes
+     * with same ip and letter code
      */
     public void writeVisit(String letterShortCode, String ip) {
         executor.execute(() -> {
-            LetterStat letterStat = new LetterStat(
-                    LocalDateTime.now(UTC), ip, letterShortCode);
-            letterStatRepository.save(letterStat);
+            Optional<LetterStat> letterStat = letterStatRepository
+                    .findFirstByLetterShortCodeIsAndIpIsAndVisitTimestampIsAfter(
+                            letterShortCode,
+                            ip,
+                            LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+            if (letterStat.isEmpty()) {
+                letterStatRepository.save(new LetterStat(LocalDateTime.now(UTC), ip, letterShortCode));
+            }
         });
     }
 

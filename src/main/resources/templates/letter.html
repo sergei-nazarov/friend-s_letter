@@ -1,133 +1,68 @@
 <!DOCTYPE html>
-<html lang="eng" xmlns:th="https://www.thymeleaf.org">
+<html>
 <head>
     <title th:text="#{site.headline.read}">Letter for you</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{/static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{/static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{/static/js/showdown.min.js}"></script>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script src="../static/js/created.js" th:src="@{/static/js/created.js}"></script>
 </head>
 <style>
-    .form-control {
-        margin-bottom: 13px
-    }
-
-    .parent {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        align-content: center;
-        justify-content: center;
-        overflow: auto;
-        background-color: aliceblue;
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
     }
 </style>
-
 <body>
+<div class="container-md" th:replace="~{fragments/header.html::header}">
+</div>
+<div class="container-xxl">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <div class="album py-5 bg-body">
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        var created = new Date("[[${#temporals.formatISO(letter.created)}]]")
-        var expiration_date = new Date("[[${#temporals.formatISO(letter.expirationDate)}]]")
-        var user_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-        function changeTimeZone(date, timeZone) {
-            return new Date(
-                date.toLocaleString('en-US', {
-                    timeZone,
-                }),
-            );
-        }
-
-        function parseDate(date) {
-            const utc = new Date(Date.UTC(date.getFullYear(),
-                date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
-            day = utc.getDate()
-            month = utc.getMonth() + 1
-            year = utc.getFullYear()
-            hour = utc.getHours()
-            minute = utc.getMinutes()
-            console.log(day)
-            console.log(utc)
-            result = (day).toString().padStart(2, "0") + "-" +
-                (month).toString().padStart(2, "0") + "-" +
-                year + " " + " " + (hour).toString().padStart(2, "0") +
-                ":" + (minute).toString().padStart(2, "0")
-            return result
-        }
-
-        document.getElementById("time1").textContent = parseDate(created)
-        document.getElementById("time2").textContent = parseDate(expiration_date)
-        document.getElementById("timezone").textContent = user_timezone
-
-    });
-</script>
-
-
-<div class="parent">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 well well-sm">
-
-                <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
-                <div th:object="${letter}">
-                    <label th:text="#{letter.for_you}">This letter for you!</label>
-                    <textarea class="form-control" cols="25" placeholder="Start writing..." required="required"
-                              rows="9" th:field="*{message}"></textarea>
-                    <div class="row">
-
-                        <div class="col-xs-12 col-md-12">
-                            <label>
-                                <input class="form-check-input" disabled th:field="*{isSingleRead}" type="checkbox"/>
-                                <span th:text="#{letter.burn}">Burn after reading</span>
-                            </label>
+        <div class="row row-cols-1 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 g-3">
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="mb-3">
+                        <div class="card-body">
+                            <h4 th:text="#{letter.info}">Letter info</h4>
+                            <p class="card-text" th:text="#{letter.info.text}">This is some info about letter.</p>
+                            <hr/>
+                            <div th:replace="~{fragments/general_fragments.html::letter_info}">
+                            </div>
+                            <a th:href="@{/}" th:text="#{letter.create_you_own}">Create your own letter</a>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12">
-                            <label>
-                                <input class="form-check-input" disabled th:field="*{publicLetter}" type="checkbox"/>
-                                <span th:text="#{letter.public}">Make letter public</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-6 col-md-6" th:text="#{letter.created}">
-                            Created
-                        </div>
-                        <div class="col-xs-6 col-md-6" th:text="#{letter.exp_date}">
-                            Expire date
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-6 col-md-6" id="time1"
-                        >
-                        </div>
-                        <div class="col-xs-6 col-md-6" id="time2"
-                        >
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <a class="col-xs-6 col-md-6" th:href="@{/}" th:text="#{letter.create_you_own}">Create your
-                            letter!</a>
-                        <span class="col-xs-6 col-md-6" id="timezone"></span>
-                        </span>
                     </div>
                 </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="card-body">
+                        <h4 th:text="#{letter.for_you}">This letter is for you</h4>
+                        <hr/>
+                        <div id="md_preview" th:text="${letter.message}">
+                            <H1>Letter text</H1>
+                            <p>Sone ipsum dollar</p>
+                            <br/>
+                            <p>Sone ipsum dollar</p>
+                            <p>Sone ipsum dollar</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" th:replace="~{fragments/popular.html::popular}">
             </div>
         </div>
     </div>
 </div>
+<footer th:replace="~{fragments/footer.html::footer}">
+</footer>
 
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
