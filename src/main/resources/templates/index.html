@@ -41,34 +41,43 @@
                                     able to share a link to this letter. Full Markdown language support.</p>
                             </div>
 
-                            <textarea class="form-control mt-1 border border-primary" id="content"
+                            <textarea class="form-control mt-1 border border-primary" id="content" required
                                       placeholder="Start writing your letter here..." rows="5"
                                       th:field="*{message}" th:placeholder="#{letter.start_writing}">
 ## My dear friend **Lavaso**
 I'm writing to you for...
 </textarea>
-                        </div>
-                        <div class="form-floating mb-3 border-primary">
-                            <input class="form-control" id="floatingInput" placeholder="Letter title"
-                                   th:field="*{title}" type="text">
-                            <label for="floatingInput" th:text="#{letter.title}">Title111</label>
-                        </div>
-                        <div class="form-floating">
-                            <input class="form-control" id="floatingPassword" placeholder="Your name"
-                                   th:field="*{author}"
-                                   type="text">
-                            <label for="floatingPassword" th:text="#{letter.your_name}">Your name</label>
-                        </div>
+                            <div class="text-danger" th:errors="*{message}"
+                                 th:if="${#fields.hasErrors('message')}"></div>
 
+                        </div>
                         <div class="card-body">
+
+                            <div class="form-floating mb-3 border-primary">
+                                <input class="form-control" id="floatingInput" placeholder="Letter title"
+                                       th:field="*{title}" type="text">
+                                <label for="floatingInput" th:text="#{letter.title}">Title111</label>
+                                <div class="text-danger" th:errors="*{title}"
+                                     th:if="${#fields.hasErrors('title')}"></div>
+                            </div>
+                            <div class="form-floating">
+                                <input class="form-control" id="floatingPassword" placeholder="Your name"
+                                       th:field="*{author}"
+                                       type="text">
+                                <label for="floatingPassword" th:text="#{letter.your_name}">Your name</label>
+                                <div class="text-danger" th:errors="*{author}"
+                                     th:if="${#fields.hasErrors('author')}"></div>
+
+                            </div>
+
                             <div>
-                                <div class="form-check form-check-inline form-switch">
+                                <div class="form-check form-check-inline form-switch mt-3">
                                     <input checked class="form-check-input" id="flexSwitchPublic"
                                            role="switch" th:field="*{publicLetter}" type="checkbox">
                                     <label class="form-check-label" for="flexSwitchPublic" th:text="#{letter.public}">Public
                                         letter</label>
                                 </div>
-                                <div class="form-check form-check-inline form-switch">
+                                <div class="form-check form-check-inline form-switch mt-3">
                                     <input class="form-check-input" id="flexSwitchSingleUse" role="switch"
                                            th:field="*{singleRead}" type="checkbox">
                                     <label class="form-check-label" for="flexSwitchSingleUse" th:text="#{letter.burn}">Burn
@@ -80,6 +89,8 @@ I'm writing to you for...
                                     <label class="form-check-label" for="expiry" th:text="#{letter.expiry_date}">Expiration
                                         date</label>
                                 </div>
+                                <div class="text-danger" th:errors="*{expirationDate}"
+                                     th:if="${#fields.hasErrors('expirationDate')}"></div>
                                 <input id="TimezoneField" th:name="timeZone" type="hidden">
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-lg btn-primary"
@@ -96,6 +107,10 @@ I'm writing to you for...
             <div class="col">
                 <div class="card shadow-sm bg-body-tertiary">
                     <div class="card-body">
+                        <div class="alert alert-danger" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">
+                            A simple danger alert—check it out!
+                        </div>
+
                         <h4 th:text="#{letter.headline.preview}">Letter preview</h4>
                         <p class="card-text" th:text="#{letter.headline.preview.text}">You can see how your letter is
                             looking in realtime</p>

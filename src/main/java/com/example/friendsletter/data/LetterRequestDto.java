@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
 public class LetterRequestDto {
 
     @Size(message = "Letter too big. Max 2147483647 symbols")
-    @NotBlank(message = "Message is mandatory")
+    @NotBlank(message = "{letter.validation.text_is_mandatory}")
     private String message;
-    @Future(message = "Expiration date must be in the future")
+    @Future(message = "{letter.validation.expiry_date_in_past}")
     private LocalDateTime expirationDate;
     private String timeZone;
-    @Size(max = 100, message = "Title too long. Max 100 symbols")
+    @Size(max = 100, message = "{letter.validation.title_too_long}")
     private String title;
-    @Size(max = 100, message = "Author name too long. Max 100 symbols")
+    @Size(max = 100, message = "{letter.validation.author_too_long}")
     private String author;
     private boolean singleRead;
     private boolean publicLetter;

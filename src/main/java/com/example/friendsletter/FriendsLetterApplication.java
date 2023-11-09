@@ -17,6 +17,8 @@ public class FriendsLetterApplication {
         //todo rate limiter
         //todo single use bag
 
+        //todo popular messages
+
         //list public messages
         //cache!!
         //swagger

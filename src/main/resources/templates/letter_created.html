@@ -38,11 +38,13 @@
                             <h4 th:text="#{letter.info}">Letter info</h4>
                             <hr/>
                             <div th:text="#{letter.available_url}">Letter is available at url:</div>
-                            <p class="d-flex w-100 align-items-center justify-content-between">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
                                 <strong class="mb-1" id="letterUrl"
                                         th:text="${serverHost} + '/l/' + *{letterShortCode}">www.sergeiprojects.ru/l/jdhtkr </strong>
-                                <button id="copyButton" th:text="#{letter.copy_url}">Copy url</button>
-                            </p>
+                                <button class="btn btn-secondary" id="copyButton" th:text="#{letter.copy_url}">Copy
+                                    url
+                                </button>
+                            </div>
 
                             <div th:replace="~{fragments/general_fragments.html::letter_info}">
                             </div>
