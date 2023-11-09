@@ -58,7 +58,7 @@ public interface MessageStorage {
      * @return unique file id
      */
     default String save(String message) {
-        return save(new ByteArrayInputStream(message.getBytes()));
+        return save(new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
