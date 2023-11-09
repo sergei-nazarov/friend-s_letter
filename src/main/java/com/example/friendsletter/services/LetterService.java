@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class LetterService {
     /**
      * @param letterDto - message info to save
      * @return response with letterShortCode
-     * Letter metadata will be stored in DB, message in messageStore and in cache
+     * Letter metadata will be stored in DB, message in messageStore and cache
      */
     public LetterResponseDto saveLetter(LetterRequestDto letterDto) {
         String message = letterDto.getMessage();
@@ -71,14 +72,13 @@ public class LetterService {
         }
 
         LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), tz);
-        LocalDateTime created = LocalDateTime.now(tz);
-        LetterMetadata letter = new LetterMetadata(letterShortCode, messageId,
-                utcExpDate, toUtc(created, tz), letterDto.isSingleRead(), letterDto.isPublicLetter());
-        letterRepository.save(letter);
+        LocalDateTime utcCreated = LocalDateTime.now(ZoneOffset.UTC);
 
-        return new LetterResponseDto(letterDto.getMessage(),
-                letterShortCode, created, fromUtc(utcExpDate, tz),
-                tz.getId(), letter.isSingleRead(), letter.isPublicLetter());
+        LetterMetadata letter = new LetterMetadata(letterShortCode, letterDto.isSingleRead(), letterDto.isPublicLetter(),
+                letterDto.getTitle(), letterDto.getAuthor(),
+                utcCreated, utcExpDate, messageId);
+        letterRepository.save(letter);
+        return letter.toLetterResponseDto(message);
     }
 
     /**
@@ -115,9 +115,7 @@ public class LetterService {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.MESSAGE_NOT_FOUND);
         }
 
-        return new LetterResponseDto(message, letterShortCode, letter.getCreated(),
-                letter.getExpirationDate(), UTC.getId(),
-                letter.isSingleRead(), letter.isPublicLetter());
+        return null;//todo
     }
 
     /**

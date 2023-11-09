@@ -1,88 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap Admin Theme v3</title>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="../static/js/bootstrap-markdown.js"></script>
-    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
-
+    <title th:text="#{site.headline.created}">Letter for you</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{static/js/showdown.min.js}"></script>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script src="../static/js/created.js" th:src="@{/static/js/created.js}"></script>
 </head>
 <style>
     .md-editor .dropdown-menu li {
         cursor: pointer;
     }
+
+    .date-time {
+    }
 </style>
 <body>
-<div class="container-md">
-    <div class="header">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Friend's Letter</a>
-                <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
-                        class="navbar-toggler"
-                        data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                               role="button">
-                                Language
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">English</a></li>
-                                <li><a class="dropdown-item" href="#">Français</a></li>
-                                <li><a class="dropdown-item" href="#">Русский</a></li>
-
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </div>
+<div class="container-md" th:replace="~{fragments/header.html::header}">
 </div>
 <div class="container-xxl">
 
     <div class="album py-5 bg-body">
         <div class="row row-cols-1 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 g-3">
-            <div class="col">
+            <div class="col" th:object="${letter}">
                 <div class="card shadow-sm bg-body-tertiary">
                     <div class="mb-3">
                         <div class="card-body">
-                            <h4>Letter info</h4>
+                            <h4 th:text="#{letter.info}">Letter info</h4>
                             <hr/>
-                            <div>Letter is available at url:</div>
+                            <div th:text="#{letter.available_url}">Letter is available at url:</div>
                             <p class="d-flex w-100 align-items-center justify-content-between">
-                                <strong class="mb-1">www.sergeiprojects.ru/l/jdhtkr </strong>
-                                <button>Copy url</button>
+                                <strong class="mb-1" id="letterUrl"
+                                        th:text="${serverHost} + '/l/' + *{letterShortCode}">www.sergeiprojects.ru/l/jdhtkr </strong>
+                                <button id="copyButton" th:text="#{letter.copy_url}">Copy url</button>
                             </p>
 
-                            <p><strong>Title:</strong> <span>Letter about life</span></p>
-                            <p><strong>Author:</strong> <span>Sergei</span></p>
+                            <p><strong th:text="#{letter.title} +':'">Title:</strong> <span>Letter about life</span></p>
+                            <p><strong th:text="#{letter.author}+':'">Author:</strong> <span>Sergei</span></p>
                             <div class="form-check form-check-inline form-switch mt-1">
                                 <input checked class="form-check-input" disabled
-                                       id="flexSwitchPublic" role="switch" type="checkbox">
-                                <label class="form-check-label" for="flexSwitchPublic">Public letter</label>
+                                       id="flexSwitchPublic" role="switch" th:field="*{publicLetter}" type="checkbox">
+                                <label class="form-check-label" for="flexSwitchPublic" th:text="#{letter.public}">Public
+                                    letter</label>
                             </div>
                             <div class="form-check form-check-inline form-switch mt-1">
                                 <input class="form-check-input" disabled id="flexSwitchSingleUse"
-                                       role="switch" type="checkbox">
-                                <label class="form-check-label" for="flexSwitchSingleUse">Burn after
+                                       role="switch" th:field="*{singleRead}" type="checkbox">
+                                <label class="form-check-label" for="flexSwitchSingleUse" th:text="#{letter.burn}">Burn
+                                    after
                                     reading</label>
                             </div>
-                            <p class="mt-3"><strong>Created:</strong> <span>2022-11-11 22:21</span></p>
-                            <p><strong>Expiry date:</strong> <span>2100-01-01 00:00</span></p>
-                            <a href="#">Create one more letter</a>
+                            <p class="mt-3"><strong th:text="#{letter.created} +':'">Created1:</strong> <span
+                                    class="date-time"
+                                    th:text="*{#temporals.formatISO(created)}">2022-11-11 22:21</span>
+                            </p>
+                            <p><strong th:text="#{letter.exp_date} +':'">Expiry date:</strong> <span class="date-time"
+                                                                                                     th:text="*{#temporals.formatISO(expirationDate)}">2100-01-01 00:00</span>
+                            </p>
+                            <a href="#" th:href="@{/}" th:text="#{letter.create_one_more}">Create one more letter</a>
 
                         </div>
                     </div>
@@ -91,10 +71,10 @@
             <div class="col">
                 <div class="card shadow-sm bg-body-tertiary">
                     <div class="card-body">
-                        <h4>Letter created</h4>
+                        <h4 th:text="#{letter.was_created}">Letter created</h4>
                         <hr/>
 
-                        <div id="md_preview">
+                        <div id="md_preview" th:text="${letter.message}">
                             <H1>Letter text</H1>
                             <p>Sone ipsum dollar</p>
                             <p>Sone ipsum dollar</p>
@@ -110,92 +90,21 @@
 
                 </div>
             </div>
-            <div class="col">
-                <div class="card shadow-sm bg-body-tertiary">
-                    <div class="card-body">
-                        <h4>The most popular letters</h4>
-                        <p class="card-text">List of letters with the most reads</p>
-                        <hr/>
-                        <div>
-                            <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                               href="#">
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <strong class="mb-1">Letter title </strong>
-                                    <small><i class="bi bi-calendar2"> </i>
-                                        </i>2023-12-11 10:38</small>
-                                </div>
-                                <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
-                                </div>
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <div>Author: Sergei</div>
-                                    <small><i class="bi bi-eye"> </i>
-                                        </i>183</small>
-                                </div>
-                            </a>
-                            <hr/>
-                            <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                               href="#">
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <strong class="mb-1">Letter title </strong>
-                                    <small><i class="bi bi-calendar2"> </i>
-                                        </i>2023-12-11 10:38</small>
-                                </div>
-                                <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
-                                </div>
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <div>Author: Sergei</div>
-                                    <small><i class="bi bi-eye"> </i>
-                                        </i>183</small>
-                                </div>
-                            </a>
-                            <hr/>
-                            <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                               href="#">
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <strong class="mb-1">Letter title </strong>
-                                    <small><i class="bi bi-calendar2"> </i>
-                                        </i>2023-12-11 10:38</small>
-                                </div>
-                                <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
-                                </div>
-                                <div class="d-flex w-100 align-items-center justify-content-between">
-                                    <div>Author: Sergei</div>
-                                    <small><i class="bi bi-eye"> </i>
-                                        </i>183</small>
-                                </div>
-                            </a>
-                        </div>
-
-                    </div>
-
-                </div>
+            <div class="col" th:replace="~{fragments/popular.html::popular}">
             </div>
+
         </div>
+
     </div>
 </div>
+</div>
+</div>
+</div>
 
-<footer>
-    <div class="container-md">
-        <div class="copy text-center">
-            Timezone <span id="tz">Asia/Tbilisi</span>
-        </div>
-
-        <div class="copy text-center">
-            Copyright 2024 <a href='#'>Website</a>
-        </div>
-
-    </div>
+<footer th:replace="~{fragments/footer.html::footer}">
 </footer>
 
-<script crossorigin="anonymous"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        render_md();
-        document.getElementById("tz").value = Intl.DateTimeFormat().resolvedOptions().timeZone
-    });
-</script>
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
 
 </body>
 </html>

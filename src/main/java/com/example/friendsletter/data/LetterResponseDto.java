@@ -18,7 +18,8 @@ public class LetterResponseDto {
     private String letterShortCode;
     private LocalDateTime created;
     private LocalDateTime expirationDate;
-    private String timeZone;
-    private boolean singleUse;
+    private String title;
+    private String author;
+    private boolean singleRead;
     private boolean publicLetter;
 }

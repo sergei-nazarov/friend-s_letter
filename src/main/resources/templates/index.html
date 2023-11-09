@@ -18,7 +18,7 @@
     }
 </style>
 <body>
-<div class="container-md" th:replace="fragments/header.html::header">
+<div class="container-md" th:replace="~{fragments/header.html::header}">
 
 </div>
 <div class="container-xxl">
@@ -100,13 +100,13 @@ I'm writing to you for...
 
                 </div>
             </div>
-            <div class="col" th:replace="fragments/popular.html::popular">
+            <div class="col" th:replace="~{fragments/popular.html::popular}">
             </div>
         </div>
     </div>
 </div>
 
-<footer th:replace="fragments/footer.html::footer">
+<footer th:replace="~{fragments/footer.html::footer}">
 </footer>
 
 <script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>

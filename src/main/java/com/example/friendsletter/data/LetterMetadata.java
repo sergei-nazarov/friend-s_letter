@@ -3,7 +3,7 @@ package com.example.friendsletter.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Entity for storage in database
  */
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -62,14 +62,20 @@ public class LetterMetadata implements Serializable {
      */
     private String messageId;
 
-
-    public LetterMetadata(String letterShortCode, String messageId, LocalDateTime expirationDate,
-                          LocalDateTime created, boolean singleUse, boolean publicLetter) {
+    public LetterMetadata(String letterShortCode, boolean singleRead, boolean publicLetter,
+                          String title, String author, LocalDateTime created,
+                          LocalDateTime expirationDate, String messageId) {
         this.letterShortCode = letterShortCode;
-        this.messageId = messageId;
-        this.expirationDate = expirationDate;
-        this.singleRead = singleUse;
+        this.singleRead = singleRead;
         this.publicLetter = publicLetter;
+        this.title = title;
+        this.author = author;
         this.created = created;
+        this.expirationDate = expirationDate;
+        this.messageId = messageId;
+    }
+
+    public LetterResponseDto toLetterResponseDto(String message) {
+        return new LetterResponseDto(message, letterShortCode, created, expirationDate, title, author, singleRead, publicLetter);
     }
 }
