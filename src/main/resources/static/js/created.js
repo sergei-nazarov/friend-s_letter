@@ -42,7 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
         element.textContent = parseDate(new Date(element.textContent))
     }
 
-    document.getElementById('copyButton').addEventListener('click', copyToBuffer)
+    let copyButton = document.getElementById('copyButton');
+    if (copyButton != null) {
+        copyButton.addEventListener('click', copyToBuffer)
+
+    }
 
     function copyToBuffer() {
         copyToClipboard(document.getElementById("letterUrl").textContent);
