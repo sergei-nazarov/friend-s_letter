@@ -84,6 +84,7 @@ I'm writing to you for...
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-lg btn-primary"
                                             th:text="#{letter.generate_url}"
+                                            onClick="this.form.submit(); this.disabled=true;"
                                             type="submit">Generate url
                                     </button>
                                 </div>
