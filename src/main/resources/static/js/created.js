@@ -36,10 +36,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return result
     }
 
+    function changeTimeZone(date, timeZone) {
+        return new Date(
+            date.toLocaleString('en-US', {
+                timeZone,
+            }),
+        );
+    }
+
     let date_time_elements = document.querySelectorAll(".date-time");
     for (var i = 0; i < date_time_elements.length; i++) {
         var element = date_time_elements[i];
-        element.textContent = parseDate(new Date(element.textContent))
+        element.textContent = parseDate(changeTimeZone(new Date(element.textContent), "UTC"))
     }
 
     let copyButton = document.getElementById('copyButton');
