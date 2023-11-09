@@ -19,8 +19,8 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
-@Table(name = "letters")
-public class Letter implements Serializable {
+@Table(name = "letters_metadata")
+public class LetterMetadata implements Serializable {
 
     @Id
     @Column(nullable = false)
@@ -33,11 +33,20 @@ public class Letter implements Serializable {
     /**
      * If true, the message can only be read 1 time
      */
-    private boolean singleUse;
+    private boolean singleRead;
     /**
-     * Can be shown in API
+     * Can be shown in API and popular messages
      */
     private boolean publicLetter;
+
+    /**
+     * Title of the letter
+     */
+    private String title;
+    /**
+     * Author of the letter
+     */
+    private String author;
     /**
      * Date of Creation
      * Strictly UTC time
@@ -54,12 +63,12 @@ public class Letter implements Serializable {
     private String messageId;
 
 
-    public Letter(String letterShortCode, String messageId, LocalDateTime expirationDate,
-                  LocalDateTime created, boolean singleUse, boolean publicLetter) {
+    public LetterMetadata(String letterShortCode, String messageId, LocalDateTime expirationDate,
+                          LocalDateTime created, boolean singleUse, boolean publicLetter) {
         this.letterShortCode = letterShortCode;
         this.messageId = messageId;
         this.expirationDate = expirationDate;
-        this.singleUse = singleUse;
+        this.singleRead = singleUse;
         this.publicLetter = publicLetter;
         this.created = created;
     }

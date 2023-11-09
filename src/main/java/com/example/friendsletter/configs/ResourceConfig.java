@@ -6,23 +6,25 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class ResourceConfig {
 
+
     @Bean
-    public SimpleUrlHandlerMapping faviconHandlerMapping() {
+    public SimpleUrlHandlerMapping staticResourceHandlerMapping() {
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(Integer.MIN_VALUE);
-        mapping.setUrlMap(Collections.singletonMap("/favicon.ico",
-                faviconRequestHandler()));
+        ResourceHttpRequestHandler resourceHandler = staticResourceHandler();
+        mapping.setUrlMap(Map.of("/static/**", resourceHandler,
+                "/favicon.ico", resourceHandler));
         return mapping;
     }
 
     @Bean
-    protected ResourceHttpRequestHandler faviconRequestHandler() {
+    public ResourceHttpRequestHandler staticResourceHandler() {
         ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
         requestHandler.setLocations(List.of(new ClassPathResource("/static/")));
         return requestHandler;

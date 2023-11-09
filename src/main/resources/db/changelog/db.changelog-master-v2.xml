@@ -14,5 +14,16 @@
         </rollback>
         <dropColumn tableName="letters" columnName="ID"/>
     </changeSet>
+    <changeSet author="sergey" id="update_and_rename">
+        <renameTable oldTableName="letters" newTableName="letters_metadata"/>
+        <addColumn tableName="letters_metadata">
+            <column name="AUTHOR" type="VARCHAR(127)"/>
+            <column name="TITLE" type="VARCHAR(127)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="sergey" id="rename single use">
+        <renameColumn tableName="letters_metadata" oldColumnName="single_use"
+                      newColumnName="single_read"/>
+    </changeSet>
 
 </databaseChangeLog>

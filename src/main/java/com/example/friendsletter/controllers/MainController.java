@@ -33,7 +33,8 @@ public class MainController {
 
     @GetMapping("/")
     String mainPage(Model model) {
-        LetterResponseDto letterDto = new LetterResponseDto();
+        LetterRequestDto letterDto = new LetterRequestDto();
+        letterDto.setPublicLetter(true);
         model.addAttribute("letter", letterDto);
         return "index";
 

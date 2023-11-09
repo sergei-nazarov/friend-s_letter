@@ -72,13 +72,13 @@ public class LetterService {
 
         LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), tz);
         LocalDateTime created = LocalDateTime.now(tz);
-        Letter letter = new Letter(letterShortCode, messageId,
-                utcExpDate, toUtc(created, tz), letterDto.isSingleUse(), letterDto.isPublicLetter());
+        LetterMetadata letter = new LetterMetadata(letterShortCode, messageId,
+                utcExpDate, toUtc(created, tz), letterDto.isSingleRead(), letterDto.isPublicLetter());
         letterRepository.save(letter);
 
         return new LetterResponseDto(letterDto.getMessage(),
                 letterShortCode, created, fromUtc(utcExpDate, tz),
-                tz.getId(), letter.isSingleUse(), letter.isPublicLetter());
+                tz.getId(), letter.isSingleRead(), letter.isPublicLetter());
     }
 
     /**
@@ -90,14 +90,14 @@ public class LetterService {
      */
     public LetterResponseDto readLetter(String letterShortCode) throws LetterNotAvailableException {
 
-        Optional<Letter> letterOptional = letterRepository.findByLetterShortCode(letterShortCode);
+        Optional<LetterMetadata> letterOptional = letterRepository.findByLetterShortCode(letterShortCode);
         if (letterOptional.isEmpty()) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.LETTER_NOT_FOUND);
         }
-        Letter letter = letterOptional.get();
+        LetterMetadata letter = letterOptional.get();
         if (LocalDateTime.now(UTC).isAfter(letter.getExpirationDate())) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.EXPIRED);
-        } else if (letter.isSingleUse() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
+        } else if (letter.isSingleRead() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
         }
         String messageId = letter.getMessageId();
@@ -117,7 +117,7 @@ public class LetterService {
 
         return new LetterResponseDto(message, letterShortCode, letter.getCreated(),
                 letter.getExpirationDate(), UTC.getId(),
-                letter.isSingleUse(), letter.isPublicLetter());
+                letter.isSingleRead(), letter.isPublicLetter());
     }
 
     /**
@@ -151,7 +151,7 @@ public class LetterService {
     /**
      * @return List of the public messages
      */
-    public Slice<Letter> getPublicLetters(Pageable pageable) {
+    public Slice<LetterMetadata> getPublicLetters(Pageable pageable) {
         return letterRepository.findAllByPublicLetterIs(true, pageable);
     }
 

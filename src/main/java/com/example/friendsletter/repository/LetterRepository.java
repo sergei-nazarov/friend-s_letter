@@ -1,6 +1,6 @@
 package com.example.friendsletter.repository;
 
-import com.example.friendsletter.data.Letter;
+import com.example.friendsletter.data.LetterMetadata;
 import com.example.friendsletter.data.LetterWithCountVisits;
 import lombok.NonNull;
 import org.springframework.cache.annotation.CachePut;
@@ -16,16 +16,16 @@ import java.util.Optional;
 /**
  * Repository with Letter metadata
  */
-public interface LetterRepository extends JpaRepository<Letter, String> {
+public interface LetterRepository extends JpaRepository<LetterMetadata, String> {
 
     @Cacheable(cacheNames = "letter")
-    Optional<Letter> findByLetterShortCode(String letterShortCode);
+    Optional<LetterMetadata> findByLetterShortCode(String letterShortCode);
 
-    Slice<Letter> findAllByPublicLetterIs(boolean publicLetter, Pageable page);
+    Slice<LetterMetadata> findAllByPublicLetterIs(boolean publicLetter, Pageable page);
 
     @Query("""
             SELECT new com.example.friendsletter.data.LetterWithCountVisits(l, count(v))
-            FROM Letter l
+            FROM LetterMetadata l
             LEFT JOIN l.visits v
             WHERE l.publicLetter=true
             GROUP BY l
@@ -34,7 +34,7 @@ public interface LetterRepository extends JpaRepository<Letter, String> {
 
     @CachePut(cacheNames = "letter", key = "#entity.letterShortCode")
     @Override
-    <S extends Letter> @NonNull S save(@NonNull S entity);
+    <S extends LetterMetadata> @NonNull S save(@NonNull S entity);
 
 
 }

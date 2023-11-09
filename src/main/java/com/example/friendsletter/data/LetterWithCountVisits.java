@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LetterWithCountVisits {
-    private Letter letter;
+    private LetterMetadata letter;
     private long countVisits;
 
 }

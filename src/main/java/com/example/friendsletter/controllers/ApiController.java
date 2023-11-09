@@ -1,7 +1,7 @@
 package com.example.friendsletter.controllers;
 
 
-import com.example.friendsletter.data.Letter;
+import com.example.friendsletter.data.LetterMetadata;
 import com.example.friendsletter.data.LetterRequestDto;
 import com.example.friendsletter.data.LetterResponseDto;
 import com.example.friendsletter.data.LetterWithCountVisits;
@@ -35,7 +35,7 @@ public class ApiController {
 
     @Operation(summary = "Get list of the latest letters")
     @GetMapping("/letters")
-    Slice<Letter> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
+    Slice<LetterMetadata> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
             direction = Sort.Direction.DESC) Pageable pageable) {
         return letterService.getPublicLetters(pageable);
     }

@@ -30,7 +30,7 @@ public class LetterStat {
     @JoinColumn(name = "letterShortCode", referencedColumnName = "letterShortCode", insertable = false, updatable = false)
     @ToString.Exclude
     @JsonIgnore
-    private Letter letter;
+    private LetterMetadata letter;
 
     public LetterStat(LocalDateTime visitTimestamp, String ip, String letterShortCode) {
         this.visitTimestamp = visitTimestamp;

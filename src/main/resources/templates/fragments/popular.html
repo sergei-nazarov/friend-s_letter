@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title th:text="#{site.headline.create}">Bootstrap Admin Theme v3</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="../../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{static/css/bootstrap.min.css}">
+    <link href="../../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{static/css/bootstrap-icons.css}">
+    <script src="../../static/js/jquery.min.js" th:src="@{static/js/jquery.min.js}"></script>
+    <script src="../../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../../static/js/showdown.min.js" th:src="@{static/js/showdown.min.js}"></script>
+</head>
+
+<body>
+<div class="col" th:fragment="popular">
+    <div class="card shadow-sm bg-body-tertiary">
+        <div class="card-body">
+            <h4 th:text="#{letter.headline.popular}">The most popular letters</h4>
+            <p class="card-text" th:text="#{letter.headline.popular.text}">List of letters with the most reads</p>
+            <hr/>
+            <div>
+                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                   href="#">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <strong class="mb-1">Letter title </strong>
+                        <small><i class="bi bi-calendar2"> </i>
+                            </i>2023-12-11 10:38</small>
+                    </div>
+                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
+                    </div>
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <div>Author: Sergei</div>
+                        <small><i class="bi bi-eye"> </i>
+                            </i>183</small>
+                    </div>
+                </a>
+                <hr/>
+                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                   href="#">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <strong class="mb-1">Letter title </strong>
+                        <small><i class="bi bi-calendar2"> </i>
+                            </i>2023-12-11 10:38</small>
+                    </div>
+                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
+                    </div>
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <div>Author: Sergei</div>
+                        <small><i class="bi bi-eye"> </i>
+                            </i>183</small>
+                    </div>
+                </a>
+                <hr/>
+                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
+                   href="#">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <strong class="mb-1">Letter title </strong>
+                        <small><i class="bi bi-calendar2"> </i>
+                            </i>2023-12-11 10:38</small>
+                    </div>
+                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
+                    </div>
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <div>Author: Sergei</div>
+                        <small><i class="bi bi-eye"> </i>
+                            </i>183</small>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script src="../../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

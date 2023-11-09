@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title th:text="#{site.headline.create}">Bootstrap Admin Theme v3</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="../../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{static/css/bootstrap.min.css}">
+    <link href="../../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{static/css/bootstrap-icons.css}">
+    <script src="../../static/js/jquery.min.js" th:src="@{static/js/jquery.min.js}"></script>
+    <script src="../../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../../static/js/showdown.min.js" th:src="@{static/js/showdown.min.js}"></script>
+</head>
+
+<body>
+<div class="container-xxl" th:fragment="header">
+    <div class="header">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/" th:href="@{/}">Friend's Letter</a>
+                <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                        class="navbar-toggler"
+                        data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" th:text="#{site.navbar.about}">About</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                               role="button" th:text="#{lang.change}" value="">
+                                Language
+                            </a>
+                            <ul class="dropdown-menu" id="locales">
+                                <a class="dropdown-item" th:text="#{lang.eng}" value="en">English</a>
+                                <a class="dropdown-item" th:text="#{lang.fr}" value="fr">Français</a>
+                                <a class="dropdown-item" th:text="#{lang.ru}" value="ru">Русский</a>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<script src="../../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

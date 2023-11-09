@@ -23,6 +23,10 @@ public class LetterRequestDto {
     @Future(message = "Expiration date must be in the future")
     private LocalDateTime expirationDate;
     private String timeZone;
-    private boolean singleUse;
+    @Size(max = 100, message = "Title too long. Max 100 symbols")
+    private String title;
+    @Size(max = 100, message = "Author name too long. Max 100 symbols")
+    private String author;
+    private boolean singleRead;
     private boolean publicLetter;
 }

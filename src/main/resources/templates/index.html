@@ -1,119 +1,116 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <title th:text="#{site.headline.create}">Friend's letter</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{static/js/showdown.min.js}"></script>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+
 </head>
-<body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
-</script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#locales").change(function () {
-            var selectedOption = $('#locales').val();
-            if (selectedOption != '') {
-                window.location.replace('?lang=' + selectedOption);
-            }
-        });
-        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-        document.getElementById("TimezoneField").value = tz
-        document.getElementById("TimezoneText").textContent = tz
-
-    });
-</script>
-
 <style>
-    .form-control {
-        margin-bottom: 13px
-    }
-
-    .parent {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        align-content: center;
-        justify-content: center;
-        overflow: auto;
-        background-color: aliceblue;
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
     }
 </style>
-<div class="parent">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-4 well well-sm">
-                <legend><a th:href="@{/}"><i class="glyphicon glyphicon-home"></i></a> Friend's letter</legend>
-                <div class="text-danger"
-                     th:if="${errorMessage}" th:text="${errorMessage}"></div>
+<body>
+<div class="container-md" th:replace="fragments/header.html::header">
 
-                <div>
-                    <form action="#" class="form" method="post" role="form" th:action="@{/}" th:object="${letter}">
-                <textarea class="form-control" cols="25" placeholder="Start writing..."
-                          required="required" th:placeholder="#{letter.start_writing}"
-                          rows="9" th:field="*{message}"></textarea>
-                        <div class="text-danger" th:errors="*{message}" th:if="${#fields.hasErrors('message')}"></div>
+</div>
+<div class="container-xxl">
 
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12">
-                                <label>
-                                    <input class="form-check-input" th:field="*{singleUse}" th:value="#{letter.burn}"
-                                           type="checkbox"/>
-                                    <span th:text="#{letter.burn}">Burn after reading</span>
-                                </label>
+    <div class="album py-5 bg-body">
+
+        <div class="row row-cols-1 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 g-3">
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <form method="post" role="form" th:action="@{/}" th:object="${letter}">
+                        <div class="mb-3">
+                            <div class="card-body">
+                                <h4 th:text="#{letter.headline.write}">Letter to your friends</h4>
+                                <p class="card-text" th:text="#{letter.headline.write.text}">You can write a letter to
+                                    your friends here. Then, you'll be
+                                    able to share a link to this letter. Full Markdown language support.</p>
                             </div>
+
+                            <textarea class="form-control mt-1 border border-primary" id="content"
+                                      placeholder="Start writing your letter here..." rows="5"
+                                      th:field="*{message}" th:placeholder="#{letter.start_writing}">
+## My dear friend **Lavaso**
+I'm writing to you for...
+</textarea>
                         </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12">
-                                <label>
-                                    <input class="form-check-input"
-                                           th:field="*{publicLetter}" type="checkbox"/>
-                                    <span th:text="#{letter.public}">Make letter public</span>
-                                </label>
-                            </div>
+                        <div class="form-floating mb-3 border-primary">
+                            <input class="form-control" id="floatingInput" placeholder="Letter title"
+                                   th:field="*{title}" type="text">
+                            <label for="floatingInput" th:text="#{letter.title}">Title111</label>
                         </div>
-                        <label th:text="#{letter.set_expiry_date}">Set expiration date if you want</label>
-                        <div class="row">
-                            <div></div>
-                            <div class="col-xs-6 col-md-6">
-                                <label>
-                                    <input th:field="*{expirationDate}" type="datetime-local"/>
-                                </label>
-                            </div>
-                            <div class="col-xs-6 col-md-6" id="TimezoneText">
-                            </div>
+                        <div class="form-floating">
+                            <input class="form-control" id="floatingPassword" placeholder="Your name"
+                                   th:field="*{author}"
+                                   type="text">
+                            <label for="floatingPassword" th:text="#{letter.your_name}">Your name</label>
+                        </div>
 
-                            <label>
+                        <div class="card-body">
+                            <div>
+                                <div class="form-check form-check-inline form-switch">
+                                    <input checked class="form-check-input" id="flexSwitchPublic"
+                                           role="switch" th:field="*{publicLetter}" type="checkbox">
+                                    <label class="form-check-label" for="flexSwitchPublic" th:text="#{letter.public}">Public
+                                        letter</label>
+                                </div>
+                                <div class="form-check form-check-inline form-switch">
+                                    <input class="form-check-input" id="flexSwitchSingleUse" role="switch"
+                                           th:field="*{singleRead}" type="checkbox">
+                                    <label class="form-check-label" for="flexSwitchSingleUse" th:text="#{letter.burn}">Burn
+                                        after
+                                        reading</label>
+                                </div>
+                                <div class="m-2">
+                                    <input id="expiry" th:field="*{expirationDate}" type="datetime-local"/>
+                                    <label class="form-check-label" for="expiry" th:text="#{letter.expiry_date}">Expiration
+                                        date</label>
+                                </div>
                                 <input id="TimezoneField" th:name="timeZone" type="hidden">
-                            </label>
-                        </div>
-                        <div class="text-danger" th:errors="*{expirationDate}"
-                             th:if="${#fields.hasErrors('expirationDate')}"></div>
-
-                        <div>
-                            <button class="btn btn-lg btn-primary btn-block" th:text="#{letter.generate_url}"
-                                    type="submit">Get url
-                            </button>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-lg btn-primary"
+                                            th:text="#{letter.generate_url}"
+                                            type="submit">Generate url
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </form>
-                    <select id="locales" style="margin-top: 10px">
-                        <option th:text="#{lang.change}" value=""></option>
-                        <option th:text="#{lang.eng}" value="en"></option>
-                        <option th:text="#{lang.fr}" value="fr"></option>
-                        <option th:text="#{lang.ru}" value="ru"></option>
-                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="card-body">
+                        <h4 th:text="#{letter.headline.preview}">Letter preview</h4>
+                        <p class="card-text" th:text="#{letter.headline.preview.text}">You can see how your letter is
+                            looking in realtime</p>
+                        <hr/>
+                        <div id="md_preview"></div>
+                    </div>
 
                 </div>
             </div>
+            <div class="col" th:replace="fragments/popular.html::popular">
+            </div>
         </div>
     </div>
-
 </div>
+
+<footer th:replace="fragments/footer.html::footer">
+</footer>
+
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+<script src="../static/js/main.js" th:src="@{/static/js/main.js}"></script>
+
 </body>
 </html>
