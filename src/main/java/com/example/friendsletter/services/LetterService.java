@@ -153,6 +153,10 @@ public class LetterService {
         });
     }
 
+    public void writeVisitUnfair(String letterShortCode) {
+        letterStatRepository.save(new LetterStat(LocalDateTime.now(UTC), "unknown", letterShortCode));
+    }
+
     public LocalDateTime toUtc(LocalDateTime dateTime, ZoneId timeZone) {
         if (dateTime == null) {
             return LocalDateTime.of(2100, 1, 1, 0, 0, 0);

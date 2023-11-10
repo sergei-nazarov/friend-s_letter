@@ -40,7 +40,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/actuator"),
-                                new AntPathRequestMatcher("/actuator/**")
+                                new AntPathRequestMatcher("/actuator/**"),
+                                new AntPathRequestMatcher("/api1/boost")
                         )
                         .authenticated()
                         .anyRequest()

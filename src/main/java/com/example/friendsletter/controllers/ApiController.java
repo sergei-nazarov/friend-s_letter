@@ -18,6 +18,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * API Controller
@@ -61,5 +62,19 @@ public class ApiController {
     @PostMapping("/letter")
     LetterResponseDto saveLetter(@Valid @RequestBody LetterRequestDto letterDto) {
         return letterService.saveLetter(letterDto);
+    }
+
+    /**
+     * Unfair method :)
+     */
+    @Operation(hidden = true)
+    @PostMapping("/boost")
+    void boostViews(@RequestBody Map<String, String> map) {
+        String letterShortCode = map.get("letterShortCode");
+        int count = Integer.parseInt(map.get("count"));
+        for (int i = 0; i < count; i++) {
+            letterService.writeVisitUnfair(letterShortCode);
+        }
+
     }
 }
