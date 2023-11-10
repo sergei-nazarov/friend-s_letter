@@ -192,9 +192,9 @@ public class LetterService {
 
 
     /**
-     * Finding the most popular messages every minute
+     * Finding the most popular messages every 5 minutes
      */
-    @Scheduled(fixedDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     private void findingPopularMessages() {
         log.debug("Start looking for popular messages...");
         List<PopularLetterResponseDto> letters = letterRepository
