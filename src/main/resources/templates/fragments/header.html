@@ -27,7 +27,10 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="#" th:text="#{site.navbar.about}">About</a>
+                            <a class="nav-link" href="#" th:href="@{/about}" th:text="#{site.navbar.about}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" th:href="@{/swagger-ui/index.html}">Rest API</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"

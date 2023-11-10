@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title th:text="#{site.headline.read}">Letter for you</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{/static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{/static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{/static/js/showdown.min.js}"></script>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script src="../static/js/created.js" th:src="@{/static/js/created.js}"></script>
+</head>
+<style>
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .date-time {
+    }
+
+</style>
+<body>
+<div class="container-md" th:replace="~{fragments/header.html::header}"></div>
+
+
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

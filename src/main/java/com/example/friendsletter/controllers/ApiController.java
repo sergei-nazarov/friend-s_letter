@@ -1,10 +1,9 @@
 package com.example.friendsletter.controllers;
 
 
-import com.example.friendsletter.data.LetterMetadata;
 import com.example.friendsletter.data.LetterRequestDto;
 import com.example.friendsletter.data.LetterResponseDto;
-import com.example.friendsletter.data.LetterWithCountVisits;
+import com.example.friendsletter.data.PopularLetterResponseDto;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,15 +34,15 @@ public class ApiController {
 
     @Operation(summary = "Get list of the latest letters")
     @GetMapping("/letters")
-    Slice<LetterMetadata> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
+    Slice<LetterResponseDto> getPublicLetters(@ParameterObject @PageableDefault(sort = "created",
             direction = Sort.Direction.DESC) Pageable pageable) {
         return letterService.getPublicLetters(pageable);
     }
 
     @Operation(summary = "Get list of the most popular public letters")
     @GetMapping("/letters/most-popular")
-    List<LetterWithCountVisits> getMostPopular(@ParameterObject Pageable pageable) {
-        return letterService.getMostPopular(pageable);
+    List<PopularLetterResponseDto> getMostPopular() {
+        return letterService.getMostPopular();
     }
 
     @Operation(summary = "Read the letter")

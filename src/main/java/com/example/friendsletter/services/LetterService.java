@@ -3,22 +3,25 @@ package com.example.friendsletter.services;
 import com.example.friendsletter.data.*;
 import com.example.friendsletter.errors.LETTER_ERROR_STATUS;
 import com.example.friendsletter.errors.LetterNotAvailableException;
-import com.example.friendsletter.repository.LetterRepository;
+import com.example.friendsletter.repository.LetterMetadataRepository;
 import com.example.friendsletter.repository.LetterStatisticsRepository;
 import com.example.friendsletter.services.Cache.MessageCache;
 import com.example.friendsletter.services.messages.MessageStorage;
 import com.example.friendsletter.services.url.SequenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -34,15 +37,16 @@ public class LetterService {
     private final MessageStorage messageStorage;
     private final MessageCache messageCache;
     private final SequenceGenerator urlGenerator;
-    private final LetterRepository letterRepository;
+    private final LetterMetadataRepository letterRepository;
     private final LetterStatisticsRepository letterStatRepository;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private volatile List<PopularLetterResponseDto> mostPopularMessages = new ArrayList<>();
 
 
     @Autowired
     public LetterService(MessageStorage messageStorage, MessageCache messageCache,
-                         SequenceGenerator urlGenerator, LetterRepository repository,
+                         SequenceGenerator urlGenerator, LetterMetadataRepository repository,
                          LetterStatisticsRepository letterStatRepository) {
         this.messageStorage = messageStorage;
         this.messageCache = messageCache;
@@ -101,21 +105,34 @@ public class LetterService {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
         }
         String messageId = letter.getMessageId();
-        Optional<MessageCacheDto> cachedMessage = messageCache.get(messageId);
+
         String message;
         try {
-            if (cachedMessage.isPresent()) {
-                message = cachedMessage.get().getMessage();
-                log.info("Message with id " + messageId + " has been found in cache");
-            } else {
-                message = messageStorage.read(messageId);
-                messageCache.save(new MessageCacheDto(messageId, message));
-            }
+            message = getMessageText(messageId);
         } catch (FileNotFoundException e) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.MESSAGE_NOT_FOUND);
         }
 
         return letter.toLetterResponseDto(message);
+    }
+
+    /**
+     * @param messageId - message id
+     *                  Looking for message in cache, then in message store
+     * @return message text
+     * @throws FileNotFoundException if message not found
+     */
+    public String getMessageText(String messageId) throws FileNotFoundException {
+        Optional<MessageCacheDto> cachedMessage = messageCache.get(messageId);
+        String message;
+        if (cachedMessage.isPresent()) {
+            message = cachedMessage.get().getMessage();
+            log.info("Message with id " + messageId + " has been found in cache");
+        } else {
+            message = messageStorage.read(messageId);
+            messageCache.save(new MessageCacheDto(messageId, message));
+        }
+        return message;
     }
 
     /**
@@ -144,26 +161,45 @@ public class LetterService {
                 .withZoneSameInstant(UTC).toLocalDateTime();
     }
 
-    public LocalDateTime fromUtc(LocalDateTime dateTime, ZoneId timeZone) {
-        if (dateTime == null) {
-            return ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, UTC)
-                    .withZoneSameInstant(timeZone).toLocalDateTime();
-        }
-        return dateTime.atZone(UTC)
-                .withZoneSameInstant(timeZone).toLocalDateTime();
-    }
-
     /**
-     * @return List of the public messages
+     * @return List of public letters
      */
-    public Slice<LetterMetadata> getPublicLetters(Pageable pageable) {
-        return letterRepository.findAllByPublicLetterIs(true, pageable);
+    public Slice<LetterResponseDto> getPublicLetters(Pageable pageable) {
+        Slice<LetterMetadata> letterMetadata = letterRepository
+                .findAllByPublicLetterIsAndSingleReadIs(true, false, pageable);
+        List<LetterResponseDto> letterResponseDtos = letterMetadata.getContent().stream().map(letter -> {
+            String message;
+            try {
+                message = getMessageText(letter.getMessageId());
+            } catch (FileNotFoundException e) {
+                message = null;
+            }
+            return letter.toLetterResponseDto(message);
+        }).toList();
+        return new SliceImpl<>(letterResponseDtos, letterMetadata.getPageable(), letterMetadata.hasNext());
     }
 
     /**
      * @return - List of the most popular letters with count of visits
      */
-    public List<LetterWithCountVisits> getMostPopular(Pageable pageable) {
-        return letterRepository.getPopular(pageable);
+    public List<PopularLetterResponseDto> getMostPopular() {
+        return new ArrayList<>(mostPopularMessages);
+    }
+
+
+    /**
+     * Finding the most popular messages every minute
+     */
+    @Scheduled(fixedDelay = 60 * 1000)
+    private void findingPopularMessages() {
+        log.debug("Start looking for popular messages...");
+        List<PopularLetterResponseDto> letters = letterRepository
+                .getPopular(PageRequest.of(0, 10));
+        mostPopularMessages = letters.stream().peek(letterDto -> {
+            try {
+                letterDto.setMessage(getMessageText(letterDto.getMessageId()));
+            } catch (FileNotFoundException ignore) {
+            }
+        }).filter(letterDto -> letterDto.getMessage() != null).toList();
     }
 }

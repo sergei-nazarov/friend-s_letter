@@ -1,7 +1,7 @@
 package com.example.friendsletter.repository;
 
 import com.example.friendsletter.data.LetterMetadata;
-import com.example.friendsletter.data.LetterWithCountVisits;
+import com.example.friendsletter.data.PopularLetterResponseDto;
 import lombok.NonNull;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,21 +16,21 @@ import java.util.Optional;
 /**
  * Repository with Letter metadata
  */
-public interface LetterRepository extends JpaRepository<LetterMetadata, String> {
+public interface LetterMetadataRepository extends JpaRepository<LetterMetadata, String> {
 
     @Cacheable(cacheNames = "letter")
     Optional<LetterMetadata> findByLetterShortCode(String letterShortCode);
 
-    Slice<LetterMetadata> findAllByPublicLetterIs(boolean publicLetter, Pageable page);
+    Slice<LetterMetadata> findAllByPublicLetterIsAndSingleReadIs(boolean publicLetter, boolean singleRead, Pageable page);
 
     @Query("""
-            SELECT new com.example.friendsletter.data.LetterWithCountVisits(l, count(v))
+            SELECT new com.example.friendsletter.data.PopularLetterResponseDto(l, count(v))
             FROM LetterMetadata l
             LEFT JOIN l.visits v
             WHERE l.publicLetter=true
             GROUP BY l
             ORDER BY count(v) DESC""")
-    List<LetterWithCountVisits> getPopular(Pageable pageable);
+    List<PopularLetterResponseDto> getPopular(Pageable pageable);
 
     @CachePut(cacheNames = "letter", key = "#entity.letterShortCode")
     @Override

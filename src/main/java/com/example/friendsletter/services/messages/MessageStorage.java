@@ -69,7 +69,7 @@ public interface MessageStorage {
      * @return true - succeed, false - failure
      */
     default boolean update(String fileId, String message) {
-        return update(fileId, new ByteArrayInputStream(message.getBytes()));
+        return update(fileId, new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
