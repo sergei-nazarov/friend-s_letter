@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     render_md();
     let tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-    document.querySelector("#tz").value = tz
-    document.querySelector("#TimezoneField").value = tz
+    document.querySelector("#tz").textContent = tz
+    document.querySelector("#TimezoneField").textContent = tz
 
 
     function parseDate(date) {
@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let date_time_elements = document.querySelectorAll(".date-time");
     for (var i = 0; i < date_time_elements.length; i++) {
         var element = date_time_elements[i];
-        element.textContent = parseDate(changeTimeZone(new Date(element.textContent), "UTC"))
+        var date = parseDate(changeTimeZone(new Date(element.textContent)))
+        element.textContent = date
     }
 
 });

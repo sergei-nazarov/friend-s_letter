@@ -18,7 +18,16 @@ document.addEventListener('DOMContentLoaded', function () {
     render_md();
 
     let tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-    document.querySelector("#tz").value = tz
+    document.querySelector("#tz").textContent = tz
+
+
+    function changeTimeZone(date, timeZone) {
+        return new Date(
+            date.toLocaleString('en-US', {
+                timeZone,
+            }),
+        );
+    }
 
     function parseDate(date) {
         const utc = new Date(Date.UTC(date.getFullYear(),
@@ -36,24 +45,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return result
     }
 
-    function changeTimeZone(date, timeZone) {
-        return new Date(
-            date.toLocaleString('en-US', {
-                timeZone,
-            }),
-        );
-    }
 
     let date_time_elements = document.querySelectorAll(".date-time");
     for (var i = 0; i < date_time_elements.length; i++) {
         var element = date_time_elements[i];
-        element.textContent = parseDate(changeTimeZone(new Date(element.textContent), "UTC"))
+        var date = parseDate(changeTimeZone(new Date(element.textContent)))
+        element.textContent = date
     }
 
     let copyButton = document.getElementById('copyButton');
     if (copyButton != null) {
         copyButton.addEventListener('click', copyToBuffer)
-
     }
 
     function copyToBuffer() {
