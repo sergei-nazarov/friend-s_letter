@@ -12,8 +12,20 @@
     <script src="../static/js/showdown.min.js" th:src="@{/static/js/showdown.min.js}"></script>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
 </head>
+<style>
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
+    }
 
+    img {
+        max-width: 100%;
+    }
+
+    .date-time {
+    }
+</style>
 <body>
+
 <div class="col" th:fragment="popular">
     <div class="card shadow-sm bg-body-tertiary">
         <div class="card-body">
@@ -22,50 +34,23 @@
             <hr/>
             <div>
                 <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                   href="#">
+                   th:each="letter: ${mostPopularLetters}" th:href="@{/l/{id}(id=${letter.letterShortCode})}">
                     <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">Letter title </strong>
-                        <small><i class="bi bi-calendar2"> </i>
-                            </i>2023-12-11 10:38</small>
+                        <div><strong th:text="#{letter.title}+':'">Title:</strong> <span
+                                th:text="${letter.title} =='' ? #{letter.without_title} : ${letter.title}">Sergei</span>
+                        </div>
+                        <small><i class="bi bi-calendar2"> </i><strong class="date-time" th:text="${letter.created}">2023-12-11
+                            10:38</strong></small>
                     </div>
-                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
+                    <div class="mb-1 small" th:text="${letter.message}">Hello my dear friend pedroHello my dear friend
+                        pedro...
                     </div>
                     <div class="d-flex w-100 align-items-center justify-content-between">
-                        <div>Author: Sergei</div>
+                        <div><strong th:text="#{letter.author}+':'">Author:</strong> <span
+                                th:text="${letter.author} =='' ? #{letter.author_unknown} : ${letter.author}">Sergei</span>
+                        </div>
                         <small><i class="bi bi-eye"> </i>
-                            </i>183</small>
-                    </div>
-                </a>
-                <hr/>
-                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                   href="#">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">Letter title </strong>
-                        <small><i class="bi bi-calendar2"> </i>
-                            </i>2023-12-11 10:38</small>
-                    </div>
-                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
-                    </div>
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <div>Author: Sergei</div>
-                        <small><i class="bi bi-eye"> </i>
-                            </i>183</small>
-                    </div>
-                </a>
-                <hr/>
-                <a aria-current="true" class="list-group-item list-group-item-action active py-3 lh-sm"
-                   href="#">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">Letter title </strong>
-                        <small><i class="bi bi-calendar2"> </i>
-                            </i>2023-12-11 10:38</small>
-                    </div>
-                    <div class="mb-1 small">Hello my dear friend pedroHello my dear friend pedro...
-                    </div>
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <div>Author: Sergei</div>
-                        <small><i class="bi bi-eye"> </i>
-                            </i>183</small>
+                            <span th:text="${letter.countVisits}">183</span></small>
                     </div>
                 </a>
             </div>

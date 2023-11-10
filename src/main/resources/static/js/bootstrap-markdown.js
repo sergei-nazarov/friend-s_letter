@@ -107,7 +107,7 @@
                     var z,
                         buttons = btnGroups[y].data,
                         btnGroupContainer = $('<div/>', {
-                            'class': 'btn-group btn-sm',
+                            'class': 'btn-group btn-sm mx-1',
                             'role': "group"
                         });
 
@@ -274,7 +274,7 @@
             if (this.$editor === null) {
                 // Create the panel
                 var editorHeader = $('<div/>', {
-                    'class': 'md-header btn-toolbar justify-content-between'
+                    'class': 'md-header btn-toolbar justify-content-start'
                 });
 
                 // Merge the main & additional button groups together

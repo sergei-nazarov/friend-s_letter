@@ -81,22 +81,22 @@ public class MainController {
     /**
      * @return Popular letters prepared for view
      */
-    @ModelAttribute("mostPopularMessages")
+    @ModelAttribute("mostPopularLetters")
     List<PopularLetterResponseDto> getMostPopularMessages() {
         List<PopularLetterResponseDto> popular = letterService.getMostPopular();
         return popular.stream().peek(letter -> {
-            letter.setMessage(cutShortStringForView(letter.getMessage(), 100));
-            letter.setTitle(cutShortStringForView(letter.getTitle(), 25));
-            letter.setAuthor(cutShortStringForView(letter.getAuthor(), 25));
-        }).toList();
+            letter.setMessage(cutShortStringForView(letter.getMessage(), 200));
+            letter.setTitle(cutShortStringForView(letter.getTitle(), 30));
+            letter.setAuthor(cutShortStringForView(letter.getAuthor(), 30));
+        }).limit(5).toList();
     }
 
-    private String cutShortStringForView(String string, int countCharacters) {
+    private String cutShortStringForView(String string, int countChars) {
         int stringSize = string.length();
-        if (stringSize < countCharacters) {
+        if (stringSize < countChars) {
             return string.replace("\n", " ");
         } else {
-            return string.substring(0, Math.max(0, countCharacters - 3)).replace("\n", " ") + "...";
+            return string.substring(0, Math.max(0, countChars - 3)).replace("\n", " ") + "...";
         }
     }
 
