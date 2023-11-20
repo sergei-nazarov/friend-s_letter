@@ -10,6 +10,7 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Entity for storage in database
@@ -77,5 +78,35 @@ public class LetterMetadata implements Serializable {
 
     public LetterResponseDto toLetterResponseDto(String message) {
         return new LetterResponseDto(message, letterShortCode, created, expirationDate, title, author, singleRead, publicLetter);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LetterMetadata that = (LetterMetadata) o;
+
+        if (singleRead != that.singleRead) return false;
+        if (publicLetter != that.publicLetter) return false;
+        if (!letterShortCode.equals(that.letterShortCode)) return false;
+        if (!Objects.equals(title, that.title)) return false;
+        if (!Objects.equals(author, that.author)) return false;
+        if (!created.equals(that.created)) return false;
+        if (!expirationDate.equals(that.expirationDate)) return false;
+        return messageId.equals(that.messageId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = letterShortCode.hashCode();
+        result = 31 * result + (singleRead ? 1 : 0);
+        result = 31 * result + (publicLetter ? 1 : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (author != null ? author.hashCode() : 0);
+        result = 31 * result + created.hashCode();
+        result = 31 * result + expirationDate.hashCode();
+        result = 31 * result + messageId.hashCode();
+        return result;
     }
 }

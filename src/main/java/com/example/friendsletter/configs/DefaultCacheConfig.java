@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
  * Config for default cache without Redis.
  */
 @Configuration
-@Profile({"dev"})
+@Profile({"dev", "test"})
 public class DefaultCacheConfig {
     @Bean
     public CacheManager cacheManager() {

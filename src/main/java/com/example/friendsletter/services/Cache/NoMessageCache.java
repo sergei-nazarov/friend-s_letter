@@ -10,7 +10,7 @@ import java.util.Optional;
  * Mock
  */
 @Component
-@Profile("dev")
+@Profile({"dev", "test"})
 public class NoMessageCache implements MessageCache {
 
     @Override

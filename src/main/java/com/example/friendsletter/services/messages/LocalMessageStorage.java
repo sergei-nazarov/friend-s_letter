@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * Local message store. For development purpose
  */
 @Component
-@Profile("dev")
+@Profile({"dev", "test"})
 public class LocalMessageStorage implements MessageStorage {
     @Value("${messages.store.folder:messages}")
     public Path localPath;

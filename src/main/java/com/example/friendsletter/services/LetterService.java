@@ -40,7 +40,7 @@ public class LetterService {
     private final LetterMetadataRepository letterRepository;
     private final LetterStatisticsRepository letterStatRepository;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newWorkStealingPool(6);
     private volatile List<PopularLetterResponseDto> mostPopularMessages = new ArrayList<>();
 
 
@@ -171,7 +171,7 @@ public class LetterService {
     public Slice<LetterResponseDto> getPublicLetters(Pageable pageable) {
         Slice<LetterMetadata> letterMetadata = letterRepository
                 .findAllByPublicLetterIsAndSingleReadIs(true, false, pageable);
-        List<LetterResponseDto> letterResponseDtos = letterMetadata.getContent().stream().map(letter -> {
+        List<LetterResponseDto> letterResponseDtos = letterMetadata.getContent().parallelStream().map(letter -> {
             String message;
             try {
                 message = getMessageText(letter.getMessageId());
