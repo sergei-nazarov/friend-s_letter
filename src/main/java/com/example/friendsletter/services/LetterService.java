@@ -61,10 +61,14 @@ public class LetterService {
      * Letter metadata will be stored in DB, message in messageStore and cache
      */
     public LetterResponseDto saveLetter(LetterRequestDto letterDto) {
-        String message = letterDto.getMessage();
-        String letterShortCode = urlGenerator.generate();
+        //generating unique code
+        String letterShortCode;
+        do {
+            letterShortCode = urlGenerator.generate();
+        } while (letterRepository.findById(letterShortCode).isPresent());
 
         //put message in storage and cache
+        String message = letterDto.getMessage();
         String messageId = messageStorage.save(message);
         messageCache.save(new MessageCacheDto(messageId, message));
 
