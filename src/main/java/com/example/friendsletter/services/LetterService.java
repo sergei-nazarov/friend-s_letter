@@ -55,6 +55,16 @@ public class LetterService {
         this.letterStatRepository = letterStatRepository;
     }
 
+    private static ZoneId getZoneId(String timezone) {
+        ZoneId tz;
+        try {
+            tz = ZoneId.of(timezone);
+        } catch (Exception ignore) {
+            tz = UTC;
+        }
+        return tz;
+    }
+
     /**
      * @param letterDto - message info to save
      * @return response with letterShortCode
@@ -72,20 +82,36 @@ public class LetterService {
         String messageId = messageStorage.save(message);
         messageCache.save(new MessageCacheDto(messageId, message));
 
-        ZoneId tz;
-        try {
-            tz = ZoneId.of(letterDto.getTimeZone());
-        } catch (Exception ignore) {
-            tz = UTC;
-        }
-
-        LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), tz);
+        LocalDateTime utcExpDate = toUtc(letterDto.getExpirationDate(), getZoneId(letterDto.getTimeZone()));
         LocalDateTime utcCreated = LocalDateTime.now(ZoneOffset.UTC);
 
         LetterMetadata letter = new LetterMetadata(letterShortCode, letterDto.isSingleRead(), letterDto.isPublicLetter(),
                 letterDto.getTitle(), letterDto.getAuthor(),
                 utcCreated, utcExpDate, messageId);
         letterRepository.save(letter);
+        return letter.toLetterResponseDto(message);
+    }
+
+    public LetterResponseDto updateLetter(String letterShortCode, LetterRequestDto letterDto) throws LetterNotAvailableException {
+        Optional<LetterMetadata> letterMetadataOptional = letterRepository.findById(letterShortCode);
+        if (letterMetadataOptional.isEmpty()) {
+            throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.LETTER_NOT_FOUND);//todo another exception
+        }
+        LetterMetadata letter = letterMetadataOptional.get();
+
+        letter.setAuthor(letterDto.getAuthor());
+        letter.setTitle(letterDto.getTitle());
+        letter.setPublicLetter(letterDto.isPublicLetter());
+        letter.setSingleRead(letterDto.isSingleRead());
+        letter.setExpirationDate(toUtc(letterDto.getExpirationDate(), getZoneId(letterDto.getTimeZone())));
+        letterRepository.save(letter);
+
+        //update message in storage and cache
+        String message = letterDto.getMessage();
+        String fileId = letter.getMessageId();
+        messageStorage.update(fileId, message);
+        messageCache.save(new MessageCacheDto(fileId, message));
+
         return letter.toLetterResponseDto(message);
     }
 
@@ -96,20 +122,23 @@ public class LetterService {
      * If it is not found, it will be requested in messageStore
      * @throws LetterNotAvailableException - different errors with letter.
      */
-    public LetterResponseDto readLetter(String letterShortCode) throws LetterNotAvailableException {
+    public LetterResponseDto readLetter(String letterShortCode, boolean validate) throws LetterNotAvailableException {
 
         Optional<LetterMetadata> letterOptional = letterRepository.findByLetterShortCode(letterShortCode);
         if (letterOptional.isEmpty()) {
             throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.LETTER_NOT_FOUND);
         }
         LetterMetadata letter = letterOptional.get();
-        if (LocalDateTime.now(UTC).isAfter(letter.getExpirationDate())) {
-            throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.EXPIRED);
-        } else if (letter.isSingleRead() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
-            throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
-        }
-        String messageId = letter.getMessageId();
 
+        if (validate) {
+            if (LocalDateTime.now(UTC).isAfter(letter.getExpirationDate())) {
+                throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.EXPIRED);
+            } else if (letter.isSingleRead() && letterStatRepository.countAllByLetterShortCodeIs(letterShortCode) > 0) {
+                throw new LetterNotAvailableException(letterShortCode, LETTER_ERROR_STATUS.HAS_BEEN_READ);
+            }
+        }
+
+        String messageId = letter.getMessageId();
         String message;
         try {
             message = getMessageText(messageId);
@@ -119,6 +148,11 @@ public class LetterService {
 
         return letter.toLetterResponseDto(message);
     }
+
+    public LetterResponseDto readLetter(String letterShortCode) throws LetterNotAvailableException {
+        return readLetter(letterShortCode, true);
+    }
+
 
     /**
      * @param messageId - message id

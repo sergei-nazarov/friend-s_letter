@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title th:text="#{site.headline.create}">Friend's letter</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{/static/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap-icons.css" rel="stylesheet" th:href="@{/static/css/bootstrap-icons.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap-markdown.js" th:src="@{/static/js/bootstrap-markdown.js}"></script>
+    <script src="../static/js/showdown.min.js" th:src="@{/static/js/showdown.min.js}"></script>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+</head>
+<style>
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .date-time {
+    }
+</style>
+<body>
+<div class="container-md" th:replace="~{fragments/header.html::header}">
+
+</div>
+<div class="container-xxl">
+
+    <div class="album py-5 bg-body">
+
+        <div class="row row-cols-1 row-cols-xl-2 row-cols-lg-2 g-3">
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <form method="post" role="form" th:action="@{/u/{code}(code=${letterShortCode})}"
+                          th:object="${letter}">
+                        <div class="mb-3">
+                            <div class="card-body">
+                                <h4 th:text="#{letter.update.headline}">Update your letter</h4>
+                                <p class="card-text" th:text="#{letter.update.text}">Letter will be updated with new
+                                    values</p>
+                            </div>
+
+                            <textarea class="form-control mt-1 border border-primary" id="content"
+                                      placeholder="Start writing your letter here..."
+                                      required rows="5"
+                                      th:field="*{message}" th:placeholder="#{letter.start_writing}">
+## My dear friend **Lavaso**
+I'm writing to you for...
+</textarea>
+                            <div class="text-danger" th:errors="*{message}"
+                                 th:if="${#fields.hasErrors('message')}"></div>
+
+                        </div>
+                        <div class="card-body">
+
+                            <div class="form-floating mb-3 border-primary">
+                                <input class="form-control" id="floatingInput" placeholder="Letter title"
+                                       th:field="*{title}" type="text">
+                                <label for="floatingInput" th:text="#{letter.title}">Title111</label>
+                                <div class="text-danger" th:errors="*{title}"
+                                     th:if="${#fields.hasErrors('title')}"></div>
+                            </div>
+                            <div class="form-floating">
+                                <input class="form-control" id="floatingPassword" placeholder="Your name"
+                                       th:field="*{author}"
+                                       type="text">
+                                <label for="floatingPassword" th:text="#{letter.your_name}">Your name</label>
+                                <div class="text-danger" th:errors="*{author}"
+                                     th:if="${#fields.hasErrors('author')}"></div>
+
+                            </div>
+
+                            <div>
+                                <div class="form-check form-check-inline form-switch mt-3">
+                                    <input checked class="form-check-input" id="flexSwitchPublic"
+                                           role="switch" th:field="*{publicLetter}" type="checkbox">
+                                    <label class="form-check-label" for="flexSwitchPublic" th:text="#{letter.public}">Public
+                                        letter</label>
+                                </div>
+                                <div class="form-check form-check-inline form-switch mt-3">
+                                    <input class="form-check-input" id="flexSwitchSingleUse" role="switch"
+                                           th:field="*{singleRead}" type="checkbox">
+                                    <label class="form-check-label" for="flexSwitchSingleUse" th:text="#{letter.burn}">Burn
+                                        after
+                                        reading</label>
+                                </div>
+                                <div class="m-2">
+                                    <input id="expiry" th:field="*{expirationDate}" type="datetime-local"/>
+                                    <label class="form-check-label" for="expiry" th:text="#{letter.expiry_date}">Expiration
+                                        date</label>
+                                </div>
+                                <div class="text-danger" th:errors="*{expirationDate}"
+                                     th:if="${#fields.hasErrors('expirationDate')}"></div>
+                                <input id="TimezoneField" th:name="timeZone" type="hidden">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-lg btn-primary"
+                                            onClick="this.form.submit(); this.disabled=true;"
+                                            th:text="#{letter.update.button}"
+                                            type="submit">Update letter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm bg-body-tertiary">
+                    <div class="card-body">
+                        <div class="alert alert-danger" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">
+                            A simple danger alert—check it out!
+                        </div>
+
+                        <h4 th:text="#{letter.headline.preview}">Letter preview</h4>
+                        <p class="card-text" th:text="#{letter.headline.preview.text}">You can see how your letter is
+                            looking in realtime</p>
+                        <hr/>
+                        <div id="md_preview"></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" th:replace="~{fragments/popular.html::popular}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer.html::footer}">
+</footer>
+
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+<script src="../static/js/main.js" th:src="@{/static/js/main.js}"></script>
+
+</body>
+</html>

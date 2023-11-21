@@ -60,6 +60,26 @@ public class MainController {
         return "letter_created";
     }
 
+    @GetMapping("/u/{letterShortCode}")
+    String getLetterForUpdate(@PathVariable String letterShortCode, Model model) throws LetterNotAvailableException {
+        LetterResponseDto letterResponseDto = letterService.readLetter(letterShortCode, false);
+        model.addAttribute("letter", letterResponseDto);
+        return "letter_update";
+    }
+
+    @PostMapping("/u/{letterShortCode}")
+    String updateLetter(@ModelAttribute("letter") @Valid LetterRequestDto letterDto,
+                        BindingResult bindingResult, Model model,
+                        @PathVariable("letterShortCode") String letterShortCode) throws LetterNotAvailableException {
+        if (bindingResult.hasErrors()) {
+            return "letter_update";
+        }
+        LetterResponseDto letter = letterService.updateLetter(letterShortCode, letterDto);
+        model.addAttribute("letter", letter);
+        model.addAttribute("letterShortCode", letterShortCode);
+        return "letter_created";
+    }
+
     @GetMapping("/l/{letterShortCode}")
     String readLetter(@PathVariable("letterShortCode") String letterShortCode,
                       Model model, HttpServletRequest request)
