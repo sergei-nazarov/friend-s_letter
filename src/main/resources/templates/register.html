@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title th:text="#{site.headline.create}">Friend's letter</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous" href="../static/css/bootstrap.min.css" rel="stylesheet"
+          th:href="@{/static/css/bootstrap.min.css}">
+    <script src="../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+</head>
+<style>
+    .md-editor .dropdown-menu li {
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .date-time {
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    .form-signin {
+        max-width: 330px;
+        padding: 1rem;
+    }
+
+    .form-signin .form-floating:focus-within {
+        z-index: 2;
+    }
+
+    .form-signin input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .form-signin input[type="text"] {
+        margin-bottom: -1px;
+        border-radius: 0;
+
+    }
+
+    .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+
+</style>
+<body>
+<div class="container-md" th:replace="~{fragments/header.html::header}">
+
+</div>
+<div class="container-xxl">
+    <main class="form-signin w-100 m-auto">
+        <form method="post" th:action="@{/register/save}" th:object="${user}">
+            <h1 class="h3 mb-3 fw-normal">Register form</h1>
+
+            <div class="form-floating">
+                <input class="form-control" id="floatingInput" placeholder="name@example.com" th:field="*{email}"
+                       type="email">
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input class="form-control" id="floatingUsername" placeholder="Andrey" th:field="*{username}"
+                       type="text">
+                <label for="floatingUsername">Username</label>
+            </div>
+            <div class="form-floating">
+                <input class="form-control" id="floatingPassword" placeholder="Password" th:field="*{password}"
+                       type="password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit">Create account</button>
+            <hr/>
+            <div>Already have an account?
+                <a href="#" th:href="@{/login}">Sign in</a></div>
+        </form>
+    </main>
+
+</div>
+
+<footer th:fragment="footer">
+    <div class="container-md">
+        <div class="copy text-center">
+            Copyright 2024 <a href='#'>Website</a>
+        </div>
+
+    </div>
+</footer>
+</footer>
+
+<script src="../static/js/bootstrap.bundle.min.js" th:src="@{/static/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

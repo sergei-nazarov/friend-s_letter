@@ -4,6 +4,7 @@
     <include file="db/changelog/db.changelog-master-init.xml"/>
     <include file="db/changelog/db.changelog-master-v1.xml"/>
     <include file="db/changelog/db.changelog-master-v2.xml"/>
+    <include file="db/changelog/db.changelog-authorization.xml"/>
 
 
 </databaseChangeLog>

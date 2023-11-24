@@ -3,6 +3,7 @@ package com.example.friendsletter.controllers;
 import com.example.friendsletter.data.LetterRequestDto;
 import com.example.friendsletter.data.LetterResponseDto;
 import com.example.friendsletter.data.PopularLetterResponseDto;
+import com.example.friendsletter.data.User;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -109,6 +111,19 @@ public class MainController {
             letter.setTitle(cutShortStringForView(letter.getTitle(), 30));
             letter.setAuthor(cutShortStringForView(letter.getAuthor(), 30));
         }).limit(5).toList();
+    }
+
+    /**
+     * @return user if exists
+     */
+    @ModelAttribute("user")
+    User getUser(Principal principal) {
+        if (principal == null) {
+            return null;
+        }
+        System.out.println(principal.getName());
+
+        return null;
     }
 
     private String cutShortStringForView(String string, int countChars) {

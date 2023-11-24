@@ -7,11 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -25,6 +23,13 @@ public class SecurityConfig {
     private String login;
     @Value("${actuator.password}")
     private String password;
+
+
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,10 +48,19 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/actuator/**"),
                                 new AntPathRequestMatcher("/api1/boost"),
                                 new AntPathRequestMatcher("/u/**")
-                        )
-                        .authenticated()
+                        ).hasRole("ADMIN")
                         .anyRequest()
                         .permitAll()
+                ).formLogin(
+                        form -> form
+                                .loginPage("/login")
+                                .loginProcessingUrl("/login")
+                                .defaultSuccessUrl("/")
+                                .permitAll()
+                ).logout(
+                        logout -> logout
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .permitAll()
                 ).httpBasic(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 //for h2 db
@@ -54,15 +68,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.builder()
-                .username(login)
-                .password(passwordEncoder().encode(password))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+    //    @Bean
+//    public InMemoryUserDetailsManager userDetailsService() {
+//        UserDetails user = User.builder()
+//                .username(login)
+//                .password(passwordEncoder().encode(password))
+//                .roles("ADMIN", "USER")
+//                .build();
+//        return new InMemoryUserDetailsManager(user);
+//    }
+
 
 }
 
