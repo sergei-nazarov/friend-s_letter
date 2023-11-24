@@ -1,13 +1,11 @@
 package com.example.friendsletter.configs;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,18 +16,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Value("${actuator.login}")
-    private String login;
-    @Value("${actuator.password}")
-    private String password;
-
-
-    private final UserDetailsService userDetailsService;
-
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -60,6 +46,8 @@ public class SecurityConfig {
                 ).logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .clearAuthentication(true)
+                                .logoutSuccessUrl("/login")
                                 .permitAll()
                 ).httpBasic(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -67,17 +55,6 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         return http.build();
     }
-
-    //    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        UserDetails user = User.builder()
-//                .username(login)
-//                .password(passwordEncoder().encode(password))
-//                .roles("ADMIN", "USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
 
 }
 

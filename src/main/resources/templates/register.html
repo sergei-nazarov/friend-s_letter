@@ -62,7 +62,7 @@
 </div>
 <div class="container-xxl">
     <main class="form-signin w-100 m-auto">
-        <form method="post" th:action="@{/register/save}" th:object="${user}">
+        <form method="post" th:action="@{/register}" th:object="${userDto}">
             <h1 class="h3 mb-3 fw-normal">Register form</h1>
 
             <div class="form-floating">
@@ -80,6 +80,12 @@
                        type="password">
                 <label for="floatingPassword">Password</label>
             </div>
+            <div th:if="${#fields.hasAnyErrors()}">
+                <ul>
+                    <li class="text-danger" th:each="err : ${#fields.allErrors()}" th:text="${err}"/>
+                </ul>
+            </div>
+
             <button class="btn btn-primary w-100 py-2" type="submit">Create account</button>
             <hr/>
             <div>Already have an account?
