@@ -17,8 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -48,7 +48,8 @@ public class RegistrationTest {
         String username = "Abas";
         String password = "12345";
 
-        mockMvc.perform(
+        //Register
+        ResultActions resultRegisterAction = mockMvc.perform(
                         post("/register").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("email", email)
                                 .param("username", username)
@@ -68,15 +69,26 @@ public class RegistrationTest {
         User firstByUsername = userRepository.findFirstByUsernameOrEmail(username, username);
         Assertions.assertEquals(firstByUsername.getEmail(), email);
 
-        ResultActions resultActions = mockMvc.perform(
+        Object registerAutoAuthorization = resultRegisterAction.andReturn().getRequest().getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        Assertions.assertNotNull(registerAutoAuthorization);
+        Assertions.assertEquals(username, ((SecurityContextImpl) registerAutoAuthorization).getAuthentication().getName());
+
+        //Logout
+        ResultActions logoutResultAction = mockMvc.perform(get("/logout"));
+        Object logout = logoutResultAction.andReturn().getRequest().getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        Assertions.assertNull(logout);
+
+        //Login
+        ResultActions resultLoginAction = mockMvc.perform(
                         post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("username", username)
                                 .param("password", password)
                 )
-                .andDo(print()).andExpect(status().is3xxRedirection());
-        Object security = resultActions.andReturn().getRequest().getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        Assertions.assertNotNull(security);
-        Assertions.assertEquals(username, ((SecurityContextImpl) security).getAuthentication().getName());
+                .andExpect(status().is3xxRedirection());
+        Object login = resultLoginAction.andReturn().getRequest().getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        Assertions.assertNotNull(login);
+        Assertions.assertEquals(username, ((SecurityContextImpl) login).getAuthentication().getName());
+
     }
 
 }

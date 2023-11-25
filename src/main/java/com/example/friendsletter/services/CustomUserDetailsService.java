@@ -47,7 +47,7 @@ public class CustomUserDetailsService implements UserDetailsService, IUserServic
     }
 
     @Override
-    public void saveUser(UserRegistrationDto userDto) {
+    public User saveUser(UserRegistrationDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
@@ -58,7 +58,7 @@ public class CustomUserDetailsService implements UserDetailsService, IUserServic
             role = checkRoleExist();
         }
         user.setRoles(List.of(role));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     private Role checkRoleExist() {

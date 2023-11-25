@@ -4,7 +4,7 @@ import com.example.friendsletter.data.User;
 import com.example.friendsletter.data.UserRegistrationDto;
 
 public interface IUserService {
-    void saveUser(UserRegistrationDto userDto);
+    User saveUser(UserRegistrationDto userDto);
 
     User loadUserByUsernameOrEmail(String username, String email);
 
