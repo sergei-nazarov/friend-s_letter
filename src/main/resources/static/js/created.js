@@ -9,12 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
             render_md();
         }
     });
-    let locales = document.querySelector("#locales");
-    var children = locales.children;
-    for (var i = 0; i < children.length; i++) {
-        var child = children[i];
-        child.href = '?lang=' + child.getAttribute('value');
-    }
     render_md();
 
     let tz = Intl.DateTimeFormat().resolvedOptions().timeZone

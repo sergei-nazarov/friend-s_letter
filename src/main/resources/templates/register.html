@@ -63,22 +63,22 @@
 <div class="container-xxl">
     <main class="form-signin w-100 m-auto">
         <form method="post" th:action="@{/register}" th:object="${userDto}">
-            <h1 class="h3 mb-3 fw-normal">Register form</h1>
+            <h1 class="h3 mb-3 fw-normal" th:text="#{registration.form.header}">Register form</h1>
 
             <div class="form-floating">
                 <input class="form-control" id="floatingInput" placeholder="name@example.com" th:field="*{email}"
                        type="email">
-                <label for="floatingInput">Email address</label>
+                <label for="floatingInput" th:text="#{registration.form.email}">Email address</label>
             </div>
             <div class="form-floating">
                 <input class="form-control" id="floatingUsername" placeholder="Andrey" th:field="*{username}"
                        type="text">
-                <label for="floatingUsername">Username</label>
+                <label for="floatingUsername" th:text="#{registration.form.username}">Username</label>
             </div>
             <div class="form-floating">
                 <input class="form-control" id="floatingPassword" placeholder="Password" th:field="*{password}"
                        type="password">
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword" th:text="#{login.form.password}">Password</label>
             </div>
             <div th:if="${#fields.hasAnyErrors()}">
                 <ul>
@@ -86,10 +86,12 @@
                 </ul>
             </div>
 
-            <button class="btn btn-primary w-100 py-2" type="submit">Create account</button>
+            <button class="btn btn-primary w-100 py-2" th:text="#{registration.form.create_account}" type="submit">
+                Create account
+            </button>
             <hr/>
-            <div>Already have an account?
-                <a href="#" th:href="@{/login}">Sign in</a></div>
+            <div><span th:text="#{registration.form.have_account}">Already have an account?</span>
+                <a href="#" th:href="@{/login}" th:text="#{login.form.sign_in}">Sign in</a></div>
         </form>
     </main>
 

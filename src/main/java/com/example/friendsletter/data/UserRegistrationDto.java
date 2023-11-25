@@ -1,9 +1,6 @@
 package com.example.friendsletter.data;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -15,19 +12,18 @@ public class UserRegistrationDto {
 
     private Long id;
 
-    @NotNull(message = "Field username cannot be empty")
-    @NotEmpty(message = "Field username cannot be empty")
+    @NotNull(message = "{registration.error.not_empty_username}")
+    @NotEmpty(message = "{registration.error.not_empty_username}")
     @Pattern(regexp = "^(?=[a-zA-Z0-9._]{2,40}$)(?!.*[_.]{2})[^_.].*[^_.]$",
-            message = "Username must contain only alphabetical characters (include digits), underscore and dot")
+            message = "{registration.error.username_error}")
     private String username;
 
-    @NotNull(message = "Field password cannot be empty")
-    @Size(min = 1, max = 99999, message = "Password must include at least 1 symbol")
+    @Size(min = 1, max = 99999, message = "{registration.error.empty_password}")
     private String password;
 
-    @NotNull(message = "Field email cannot be empty")
-    @NotEmpty(message = "Field email cannot be empty")
-    @NotEmpty(message = "Email must be email")
+    @NotNull(message = "{registration.error.not_empty_email}")
+    @NotEmpty(message = "{registration.error.not_empty_email}")
+    @Email(message = "{registration.error.email_incorrect}")
     private String email;
 
 }

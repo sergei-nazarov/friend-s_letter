@@ -57,25 +57,25 @@
 <div class="container-xxl">
     <main class="form-signin w-100 m-auto">
         <form method="post" th:action="@{/login}" th:object="${userDto}">
-            <h1 class="h3 mb-3 fw-normal">Please sign-in</h1>
+            <h1 class="h3 mb-3 fw-normal" th:text="#{login.form.header}">Please sign-in</h1>
 
             <div class="form-floating">
                 <input class="form-control" id="floatingUsername" placeholder="Andrey" th:field="*{username}"
                        type="text">
-                <label for="floatingUsername">Username or email</label>
+                <label for="floatingUsername" th:text="#{login.form.username_or_email}">Username or email</label>
             </div>
             <div class="form-floating">
                 <input class="form-control" id="floatingPassword" placeholder="Password" th:field="*{password}"
                        type="password">
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword" th:text="#{login.form.password}">Password</label>
             </div>
-            <div th:if="${param.error != null}">
-                <p class="text-danger">User or password is incorrect</p>
+            <div th:if="${param.error !=null}">
+                <p class="text-danger" th:text="#{login.form.login_error}">User or password is incorrect</p>
             </div>
-            <button class="btn btn-primary w-100 py-2" type="submit">Sign-in</button>
+            <button class="btn btn-primary w-100 py-2" th:text="#{login.form.sign_in}" type="submit">Sign-in</button>
             <hr/>
-            <div>Don't have an account?
-                <a href="#" th:href="@{/register}">Register</a>
+            <div><span th:text="#{login.form.do_not_have_account}">Don't have an account?</span>
+                <a href="#" th:href="@{/register}" th:text="#{login.form.register}">Register</a>
             </div>
 
         </form>
