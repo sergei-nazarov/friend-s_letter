@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -49,7 +47,7 @@ public class SecurityConfig {
                                 .clearAuthentication(true)
                                 .logoutSuccessUrl("/login")
                                 .permitAll()
-                ).httpBasic(withDefaults())
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 //for h2 db
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));

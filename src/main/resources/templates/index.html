@@ -95,7 +95,7 @@ I'm writing to you for...
                                 </div>
                                 <div class="text-danger" th:errors="*{expirationDate}"
                                      th:if="${#fields.hasErrors('expirationDate')}"></div>
-                                <input id="TimezoneField" th:name="timeZone" type="hidden">
+                                <input id="TimezoneField" th:field="*{timeZone}" type="hidden">
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-lg btn-primary"
                                             th:text="#{letter.generate_url}"

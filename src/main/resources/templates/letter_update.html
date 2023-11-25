@@ -90,13 +90,17 @@ I'm writing to you for...
                                         reading</label>
                                 </div>
                                 <div class="m-2">
-                                    <input id="expiry" th:field="*{expirationDate}" type="datetime-local"/>
+                                    <input class="date-time" id="expiry" th:name="expirationDate"
+                                           th:value="${#temporals.format(letter.expirationDate, 'yyyy-MM-dd HH:mm')}"
+                                           type="datetime-local">
+
                                     <label class="form-check-label" for="expiry" th:text="#{letter.expiry_date}">Expiration
                                         date</label>
                                 </div>
                                 <div class="text-danger" th:errors="*{expirationDate}"
                                      th:if="${#fields.hasErrors('expirationDate')}"></div>
                                 <input id="TimezoneField" th:name="timeZone" type="hidden">
+
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-lg btn-primary"
                                             onClick="this.form.submit(); this.disabled=true;"
