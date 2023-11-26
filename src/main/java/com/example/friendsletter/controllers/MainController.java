@@ -1,9 +1,6 @@
 package com.example.friendsletter.controllers;
 
-import com.example.friendsletter.data.LetterRequestDto;
-import com.example.friendsletter.data.LetterResponseDto;
-import com.example.friendsletter.data.PopularLetterResponseDto;
-import com.example.friendsletter.data.User;
+import com.example.friendsletter.data.*;
 import com.example.friendsletter.errors.LetterNotAvailableException;
 import com.example.friendsletter.services.LetterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -117,11 +114,11 @@ public class MainController {
      * @return user if exists
      */
     @ModelAttribute("user")
-    User getUser(Authentication authentication) {
+    UserDto getUser(Authentication authentication) {
         if (authentication == null) {
             return null;
         }
-        return (User) authentication.getPrincipal();
+        return ((User) authentication.getPrincipal()).toUserDto();
     }
 
     private String cutShortStringForView(String string, int countChars) {

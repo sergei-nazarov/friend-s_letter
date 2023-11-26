@@ -45,6 +45,26 @@ public class LetterViewExceptionHandler {
         return "redirect:/";
     }
 
+    /**
+     * Method for handling users' errors
+     * Redirect to the main page with an error message
+     */
+    @ExceptionHandler(UserUpdateException.class)
+    public String handleException(UserUpdateException e, RedirectAttributes redirectAttributes) {
+        Locale locale = LocaleContextHolder.getLocale();
+        for (UserErrorHolder error : e.getUserErrors()) {
+            String key;
+            switch (error.getError()) {
+                case EMAIL_ALREADY_REGISTERED -> key = "user.error.email_already_registered";
+                case USERNAME_ALREADY_REGISTERED -> key = "user.error.username_already_registered";
+                default -> throw new RuntimeException("Unexpected user error:" + error);
+            }
+            String errorMessage = messageSource.getMessage(key, new String[]{error.getUsernameOrEmail()}, locale);
+            redirectAttributes.addFlashAttribute(error.getError().toString(), errorMessage);
+        }
+        return "redirect:/person/update";
+    }
+
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handleIOException(NoHandlerFoundException error, RedirectAttributes redirectAttributes) {
         Locale locale = LocaleContextHolder.getLocale();

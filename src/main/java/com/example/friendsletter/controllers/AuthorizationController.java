@@ -2,7 +2,8 @@ package com.example.friendsletter.controllers;
 
 
 import com.example.friendsletter.data.User;
-import com.example.friendsletter.data.UserRegistrationDto;
+import com.example.friendsletter.data.UserDto;
+import com.example.friendsletter.errors.UserUpdateException;
 import com.example.friendsletter.services.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,24 +48,27 @@ public class AuthorizationController {
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        UserRegistrationDto user = new UserRegistrationDto();
+        UserDto user = new UserDto();
         model.addAttribute("userDto", user);
         return "register";
     }
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
-        UserRegistrationDto user = new UserRegistrationDto();
+        UserDto user = new UserDto();
         model.addAttribute("userDto", user);
         return "login";
     }
 
     @PostMapping("/register")
-    public String registration(@Valid @ModelAttribute("userDto") UserRegistrationDto userDto,
+    public String registration(@Valid @ModelAttribute("userDto") UserDto userDto,
                                BindingResult result,
                                Model model, Locale locale, HttpServletRequest request,
                                HttpServletResponse response) {
-
+        if (userDto.getPassword() == null || userDto.getPassword().length() == 0) {
+            result.rejectValue("password", null,
+                    messageSource.getMessage("registration.error.empty_password", null, locale));
+        }
         if (result.hasErrors()) {
             model.addAttribute("userDto", userDto);
             return "/register";
@@ -89,6 +93,31 @@ public class AuthorizationController {
         return "redirect:/";
     }
 
+    @GetMapping("/person/update")
+    public String personalPage() {
+        return "person";
+    }
+
+    @GetMapping("/person/letters")
+    public String personLetters() {
+        return "person_letters";
+    }
+
+
+    @PostMapping("/person/update")
+    public String updateUserInfo(@Valid @ModelAttribute("user") UserDto userDto,
+                                 BindingResult bindingResult,
+                                 Authentication authentication
+    ) throws UserUpdateException {
+        if (bindingResult.hasErrors()) {
+            return "person";
+        }
+        User user = (User) authentication.getPrincipal();
+        userService.updateUser(user, userDto);
+        return "redirect:/person/update";
+    }
+
+
     private void doAutoLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
         try {
             UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.unauthenticated(
@@ -104,4 +133,16 @@ public class AuthorizationController {
             log.error("Failure in autoLogin", e);
         }
     }
+
+    /**
+     * @return user if exists
+     */
+    @ModelAttribute("user")
+    UserDto getUser(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
+        return ((User) authentication.getPrincipal()).toUserDto();
+    }
+
 }

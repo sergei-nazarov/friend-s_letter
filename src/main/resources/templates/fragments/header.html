@@ -28,7 +28,8 @@
                     <ul class="navbar-nav">
 
                         <li class="nav-item" th:if="${user != null}">
-                            <a class="nav-link" href="#" th:href="@{/person}" th:text="${user.username}">Sergio</a>
+                            <a class="nav-link" href="#" th:href="@{/person/update}"
+                               th:text="${user.username}">Sergio</a>
                         </li>
 
                         <th:block>

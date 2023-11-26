@@ -2,7 +2,10 @@ package com.example.friendsletter.services;
 
 import com.example.friendsletter.data.Role;
 import com.example.friendsletter.data.User;
-import com.example.friendsletter.data.UserRegistrationDto;
+import com.example.friendsletter.data.UserDto;
+import com.example.friendsletter.errors.USER_ERRORS;
+import com.example.friendsletter.errors.UserErrorHolder;
+import com.example.friendsletter.errors.UserUpdateException;
 import com.example.friendsletter.repository.RoleRepository;
 import com.example.friendsletter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService, IUserServic
     }
 
     @Override
-    public User saveUser(UserRegistrationDto userDto) {
+    public User saveUser(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
@@ -59,6 +63,39 @@ public class CustomUserDetailsService implements UserDetailsService, IUserServic
         }
         user.setRoles(List.of(role));
         return userRepository.save(user);
+    }
+
+    @Override
+    public User updateUser(User user, UserDto updatedDto) throws UserUpdateException {
+        List<UserErrorHolder> errors = new ArrayList<>();
+
+        String newUsername = updatedDto.getUsername();
+        if (!user.getUsername().equals(newUsername)) {
+            User byUsername = userRepository.findByUsername(newUsername);
+            if (byUsername == null) {
+                user.setUsername(newUsername);
+            } else {
+                errors.add(new UserErrorHolder(USER_ERRORS.USERNAME_ALREADY_REGISTERED, newUsername));
+            }
+        }
+
+        String newEmail = updatedDto.getEmail();
+        if (!user.getEmail().equals(newEmail)) {
+            User byEmail = userRepository.findByEmail(newEmail);
+            if (byEmail == null) {
+                user.setEmail(newEmail);
+            } else {
+                errors.add(new UserErrorHolder(USER_ERRORS.EMAIL_ALREADY_REGISTERED, newEmail));
+            }
+        }
+        if (!updatedDto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(updatedDto.getPassword()));
+        }
+        if (errors.size() == 0) {
+            return userRepository.save(user);
+        } else {
+            throw new UserUpdateException(errors);
+        }
     }
 
     private Role checkRoleExist() {

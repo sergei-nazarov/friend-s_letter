@@ -65,4 +65,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public UserDto toUserDto() {
+        return new UserDto(username, null, email);
+    }
 }
