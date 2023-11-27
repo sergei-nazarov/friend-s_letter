@@ -44,6 +44,8 @@ public class User implements UserDetails {
             name = "users_letters",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "LETTER_SHORT_CODE", referencedColumnName = "letterShortCode")})
+    @ToString.Exclude
+    @Transient
     List<LetterMetadata> letters;
 
     @Override
