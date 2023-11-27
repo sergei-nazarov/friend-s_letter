@@ -40,6 +40,8 @@
                         <div class="card-body">
                             <h4 th:text="#{letter.info}">Letter info</h4>
                             <p class="card-text" th:text="#{letter.info.text}">This is some info about letter.</p>
+                            <a th:href="@{/u/{id}(id=${letter.letterShortCode})}" th:if="${itIsOwner != null}">Update
+                                letter</a>
                             <hr/>
                             <div th:replace="~{fragments/general_fragments.html::letter_info}">
                             </div>

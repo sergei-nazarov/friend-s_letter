@@ -45,9 +45,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/actuator"),
                                 new AntPathRequestMatcher("/actuator/**"),
-                                new AntPathRequestMatcher("/api1/boost"),
-                                new AntPathRequestMatcher("/u/**")
+                                new AntPathRequestMatcher("/api1/boost")
                         ).hasRole("ADMIN")
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/u/**")
+                        ).hasAnyRole("USER", "ADMIN")
                         .requestMatchers(
                                 new AntPathRequestMatcher("/person/**"),
                                 new AntPathRequestMatcher("/person")

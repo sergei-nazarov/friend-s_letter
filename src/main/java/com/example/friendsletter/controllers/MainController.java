@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,9 +37,14 @@ public class MainController {
     }
 
     @GetMapping("/")
-    String mainPage(Model model) {
+    String mainPage(Model model, Authentication authentication) {
+
         LetterRequestDto letterDto = new LetterRequestDto();
         letterDto.setPublicLetter(true);
+
+        if (authentication != null) {
+            letterDto.setAuthor(authentication.getName());
+        }
         model.addAttribute("letter", letterDto);
         return "index";
 
@@ -52,26 +58,46 @@ public class MainController {
 
     @PostMapping
     String saveLetter(@ModelAttribute("letter") @Valid LetterRequestDto letterDto,
-                      BindingResult bindingResult, Model model, Authentication principal) {
+                      BindingResult bindingResult, Model model, Authentication authentication) {
         if (bindingResult.hasErrors()) {
             return "index";
         }
-        LetterResponseDto letter = letterService.saveLetter((User) principal.getPrincipal(), letterDto);
+        User user = null;
+        if (authentication != null) {
+            user = (User) authentication.getPrincipal();
+        }
+        LetterResponseDto letter = letterService.saveLetter(user, letterDto);
         model.addAttribute("letter", letter);
         return "letter_created";
     }
 
     @GetMapping("/u/{letterShortCode}")
-    String getLetterForUpdate(@PathVariable String letterShortCode, Model model) throws LetterNotAvailableException {
-        LetterResponseDto letterResponseDto = letterService.readLetter(letterShortCode, false);
-        model.addAttribute("letter", letterResponseDto);
-        return "letter_update";
+    String getLetterForUpdate(@PathVariable String letterShortCode, Model model, Authentication authentication) throws LetterNotAvailableException {
+        if (authentication == null) {
+            return "redirect:/l/" + letterShortCode;
+        }
+        User user = (User) authentication.getPrincipal();
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || letterService.doesUserOwnLetter(user, letterShortCode)) {
+            LetterResponseDto letterResponseDto = letterService.readLetter(letterShortCode, false);
+            model.addAttribute("letter", letterResponseDto);
+            return "letter_update";
+        } else {
+            return "redirect:/l/" + letterShortCode;
+        }
     }
 
     @PostMapping("/u/{letterShortCode}")
     String updateLetter(@ModelAttribute("letter") @Valid LetterRequestDto letterDto,
                         BindingResult bindingResult, Model model,
-                        @PathVariable("letterShortCode") String letterShortCode) throws LetterNotAvailableException {
+                        @PathVariable("letterShortCode") String letterShortCode,
+                        Authentication authentication) throws LetterNotAvailableException {
+        if (authentication == null) {
+            return "redirect:/l/" + letterShortCode;
+        }
+        User user = (User) authentication.getPrincipal();
+        if (!user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) && !letterService.doesUserOwnLetter(user, letterShortCode)) {
+            return "redirect:/l/" + letterShortCode;
+        }
         if (bindingResult.hasErrors()) {
             return "letter_update";
         }
@@ -83,11 +109,17 @@ public class MainController {
 
     @GetMapping("/l/{letterShortCode}")
     String readLetter(@PathVariable("letterShortCode") String letterShortCode,
-                      Model model, HttpServletRequest request)
+                      Model model, HttpServletRequest request, Authentication authentication)
             throws LetterNotAvailableException {
         LetterResponseDto letterResponseDto = letterService.readLetter(letterShortCode);
         letterService.writeVisit(letterShortCode, request.getRemoteAddr());
         model.addAttribute("letter", letterResponseDto);
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || letterService.doesUserOwnLetter(user, letterShortCode)) {
+                model.addAttribute("itIsOwner", true);
+            }
+        }
         return "letter";
     }
 

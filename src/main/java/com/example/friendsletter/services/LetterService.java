@@ -16,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
@@ -247,7 +248,7 @@ public class LetterService {
      * Finding the most popular messages every 5 minutes
      */
     @Scheduled(fixedDelay = 5 * 60 * 1000)
-    private void findingPopularMessages() {
+    void findingPopularMessages() {
         log.debug("Start looking for popular messages...");
         List<PopularLetterResponseDto> letters = letterRepository
                 .getPopular(PageRequest.of(0, 10));
@@ -257,5 +258,14 @@ public class LetterService {
             } catch (FileNotFoundException ignore) {
             }
         }).filter(letterDto -> letterDto.getMessage() != null).toList();
+    }
+
+    @Transactional
+    public boolean doesUserOwnLetter(User user, String letterShortCode) {
+        Optional<LetterMetadata> letterMetadataOptional = letterRepository.findById(letterShortCode);
+        if (letterMetadataOptional.isEmpty() || letterMetadataOptional.get().getUser() == null) {
+            return false;
+        }
+        return user.getId().equals(letterMetadataOptional.get().getUser().getId());
     }
 }
