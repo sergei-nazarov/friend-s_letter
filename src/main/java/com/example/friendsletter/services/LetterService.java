@@ -65,12 +65,25 @@ public class LetterService {
         return tz;
     }
 
+    public List<LetterResponseDto> getLettersByUser(User user, Pageable pageable) {
+        List<LetterMetadata> letters = letterRepository.findByUser(user, pageable);
+        return letters.parallelStream().map(letter -> {
+            String message;
+            try {
+                message = getMessageText(letter.getMessageId());
+            } catch (FileNotFoundException e) {
+                message = null;
+            }
+            return letter.toLetterResponseDto(message);
+        }).toList();
+    }
+
     /**
      * @param letterDto - message info to save
      * @return response with letterShortCode
      * Letter metadata will be stored in DB, message in messageStore and cache
      */
-    public LetterResponseDto saveLetter(LetterRequestDto letterDto) {
+    public LetterResponseDto saveLetter(User user, LetterRequestDto letterDto) {
         //generating unique code
         String letterShortCode;
         do {
@@ -88,6 +101,7 @@ public class LetterService {
         LetterMetadata letter = new LetterMetadata(letterShortCode, letterDto.isSingleRead(), letterDto.isPublicLetter(),
                 letterDto.getTitle(), letterDto.getAuthor(),
                 utcCreated, utcExpDate, messageId);
+        letter.setUser(user);
         letterRepository.save(letter);
         return letter.toLetterResponseDto(message);
     }

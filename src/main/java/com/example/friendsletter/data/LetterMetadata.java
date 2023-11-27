@@ -31,6 +31,16 @@ public class LetterMetadata implements Serializable {
     @JsonIgnore
     @ToString.Exclude
     List<LetterStat> visits;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_letters",
+            joinColumns = {@JoinColumn(name = "LETTER_SHORT_CODE", referencedColumnName = "letterShortCode")},
+            inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")})
+    @JsonIgnore
+    @ToString.Exclude
+    User user;
+
     /**
      * If true, the message can only be read 1 time
      */

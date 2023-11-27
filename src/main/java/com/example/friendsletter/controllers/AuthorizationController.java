@@ -5,6 +5,7 @@ import com.example.friendsletter.data.User;
 import com.example.friendsletter.data.UserDto;
 import com.example.friendsletter.errors.UserUpdateException;
 import com.example.friendsletter.services.CustomUserDetailsService;
+import com.example.friendsletter.services.LetterService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,15 +35,18 @@ import java.util.Locale;
 public class AuthorizationController {
     private final CustomUserDetailsService userService;
     private final MessageSource messageSource;
+    private final LetterService letterService;
+
     private final AuthenticationProvider authenticationProvider;
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
 
     @Autowired
     public AuthorizationController(CustomUserDetailsService userService, MessageSource messageSource,
-                                   AuthenticationProvider authenticationProvider) {
+                                   LetterService letterService, AuthenticationProvider authenticationProvider) {
         this.userService = userService;
         this.messageSource = messageSource;
+        this.letterService = letterService;
         this.authenticationProvider = authenticationProvider;
     }
 
@@ -96,11 +100,6 @@ public class AuthorizationController {
     @GetMapping("/person/update")
     public String personalPage() {
         return "person";
-    }
-
-    @GetMapping("/person/letters")
-    public String personLetters() {
-        return "person_letters";
     }
 
 

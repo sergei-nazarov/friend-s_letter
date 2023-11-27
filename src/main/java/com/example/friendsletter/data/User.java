@@ -39,6 +39,13 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany
+    @JoinTable(
+            name = "users_letters",
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "LETTER_SHORT_CODE", referencedColumnName = "letterShortCode")})
+    List<LetterMetadata> letters;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

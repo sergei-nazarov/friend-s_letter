@@ -59,5 +59,32 @@
         <addUniqueConstraint columnNames="NAME" constraintName="UK_OFX66KERUAPI6VYQPV6F2OR37" tableName="ROLES"/>
     </changeSet>
 
+    <changeSet author="sergey (generated)" id="1701089995664-7">
+        <createTable tableName="USERS_LETTERS">
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LETTER_SHORT_CODE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sergey (generated)" id="1701089995664-12">
+        <addUniqueConstraint columnNames="LETTER_SHORT_CODE" constraintName="CONSTRAINT_D" tableName="USERS_LETTERS"/>
+    </changeSet>
+    <changeSet author="sergey (generated)" id="1701089995664-20">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="USERS_LETTERS"
+                                 constraintName="FK6R168JPS1DAMM1PXKQX4FJPJS" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="USERS" validate="true"/>
+    </changeSet>
+    <changeSet author="sergey (generated)" id="1701089995664-22">
+        <addForeignKeyConstraint baseColumnNames="LETTER_SHORT_CODE" baseTableName="USERS_LETTERS"
+                                 constraintName="FKL9G1LXB1R6KGC2JPMKQVN7YAU" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="LETTER_SHORT_CODE" referencedTableName="LETTERS_METADATA"
+                                 validate="true"/>
+    </changeSet>
+
 
 </databaseChangeLog>

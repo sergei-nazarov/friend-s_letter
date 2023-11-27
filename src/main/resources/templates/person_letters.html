@@ -48,34 +48,62 @@
         border-top-right-radius: 0;
     }
 
+    .highlight:hover {
+        background-color: #dadfe1;
+    }
+
 
 </style>
 <body>
 <div class="container-md" th:replace="~{fragments/header.html::header}">
 
 </div>
-<div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
-    <div class="dropdown-menu position-static d-flex flex-column flex-lg-row align-items-stretch justify-content-start p-3 rounded-3 shadow-sm bg-body-tertiary">
-        In progress
-        <div class="d-none d-lg-block vr mx-4 opacity-10">&nbsp;</div>
-        <hr class="d-lg-none">
-        <div class="col-lg-auto flex-fill pe-2">
-            <nav>
-                <ul class="d-flex flex-column gap-2 list-unstyled small">
-                    <li>
-                        <a class="link-offset-2 link-underline link-underline-opacity-25 link-underline-opacity-75-hover"
-                           href="#"
-                           th:href="@{/person/update}"
-                           th:text="#{user.form.header}">Update
-                            user</a></li>
-                    <li>
-                        <a class="link-offset-2 link-underline link-underline-opacity-25 link-underline-opacity-75-hover"
-                           href="#"
-                           th:href="@{/person/letters}"
-                           th:text="#{user.form.letters}">Your
-                            letters</a></li>
-                </ul>
-            </nav>
+
+<div class="container-xxl">
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row  g-lg-5 py-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <h4 class="fw-bold lh-1 text-body-emphasis mb-3" th:text="#{letter.last_30}">Your last 30 letters are
+                    here</h4>
+                <hr>
+                <p th:if="${letters.size()==0}" th:text="#{letter.no_letters}">You do not have any letters</p>
+                <a aria-current="true" class="highlight list-group-item list-group-item-action active py-3 lh-sm"
+                   th:each="letter: ${letters}" th:href="@{/l/{id}(id=${letter.letterShortCode})}">
+                    <p class=""><strong th:text="#{letter.title}+':'">Title:</strong> <span
+                            th:text="${letter.title} =='' ? #{letter.without_title} : ${letter.title}">Sergei</span>
+                    </p>
+                    <p class=""><strong th:text="#{letter.author}+':'">Author:</strong> <span
+                            th:text="${letter.author} =='' ? #{letter.author_unknown} : ${letter.author}">Sergei</span>
+                    </p>
+                    <p class=""><strong th:text="#{letter.created}+':'">Created:</strong> <span
+                            th:text="${letter.created}">3432-43</span>
+                    </p>
+                    <p class="small" style="hyphens: auto" th:text="${letter.message}">Hello my dear friend
+                        pedroHello my dear friend
+                        pedro...
+                    </p>
+
+                </a>
+
+            </div>
+            <div class="col-md-10 mx-auto col-lg-5">
+                <nav class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+                    <ul class="d-flex flex-column gap-2 list-unstyled small">
+                        <li>
+                            <a class="link-offset-2 link-underline link-underline-opacity-25 link-underline-opacity-75-hover"
+                               href="#"
+                               th:href="@{/person/update}"
+                               th:text="#{user.form.header}">Update
+                                user</a></li>
+                        <li>
+                            <a class="link-offset-2 link-underline link-underline-opacity-25 link-underline-opacity-75-hover"
+                               href="#"
+                               th:href="@{/person/letters}"
+                               th:text="#{user.form.letters}">Your
+                                letters</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 

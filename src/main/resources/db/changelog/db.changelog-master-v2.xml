@@ -26,4 +26,5 @@
                       newColumnName="single_read"/>
     </changeSet>
 
+
 </databaseChangeLog>

@@ -2,6 +2,7 @@ package com.example.friendsletter.repository;
 
 import com.example.friendsletter.data.LetterMetadata;
 import com.example.friendsletter.data.PopularLetterResponseDto;
+import com.example.friendsletter.data.User;
 import lombok.NonNull;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,6 +32,8 @@ public interface LetterMetadataRepository extends JpaRepository<LetterMetadata, 
             GROUP BY l
             ORDER BY count(v) DESC""")
     List<PopularLetterResponseDto> getPopular(Pageable pageable);
+
+    List<LetterMetadata> findByUser(User user, Pageable pageable);
 
     @CachePut(cacheNames = "letter", key = "#entity.letterShortCode")
     @Override

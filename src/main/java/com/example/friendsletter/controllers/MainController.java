@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,11 +52,11 @@ public class MainController {
 
     @PostMapping
     String saveLetter(@ModelAttribute("letter") @Valid LetterRequestDto letterDto,
-                      BindingResult bindingResult, Model model) {
+                      BindingResult bindingResult, Model model, Authentication principal) {
         if (bindingResult.hasErrors()) {
             return "index";
         }
-        LetterResponseDto letter = letterService.saveLetter(letterDto);
+        LetterResponseDto letter = letterService.saveLetter((User) principal.getPrincipal(), letterDto);
         model.addAttribute("letter", letter);
         return "letter_created";
     }
@@ -88,6 +90,17 @@ public class MainController {
         model.addAttribute("letter", letterResponseDto);
         return "letter";
     }
+
+    @GetMapping("/person/letters")
+    public String personLetters(Authentication authentication,
+                                Model model) {
+        List<LetterResponseDto> letters = letterService.getLettersByUser(
+                (User) authentication.getPrincipal(), PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "created")));
+        letters.forEach(x -> x.setMessage(cutShortStringForView(x.getMessage(), 200)));
+        model.addAttribute("letters", letters);
+        return "person_letters";
+    }
+
 
     /**
      * @return current HOST name

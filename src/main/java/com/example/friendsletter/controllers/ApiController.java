@@ -61,7 +61,7 @@ public class ApiController {
                     "Expiration date must be in the future")
     @PostMapping("/letter")
     LetterResponseDto saveLetter(@Valid @RequestBody LetterRequestDto letterDto) {
-        return letterService.saveLetter(letterDto);
+        return letterService.saveLetter(null, letterDto);
     }
 
     /**
