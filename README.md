@@ -26,7 +26,8 @@ Redis: For caching messages and improving performance.
 1. **Message Creation and Exchange**: The core functionality of the project allows creating messages with additional
    parameters, such as specifying a date when the message will become unavailable, making a message public, or setting a
    limit on the number of views. When the recipient opens the link, they can see the sent message, ensuring
-   confidentiality and convenience in communication.
+   confidentiality and convenience in communication. If you are authorized, the history of your letters is saved, and
+   you can edit your ones.
 
 2. **Asynchronous** Interaction with Google Drive: Messages in Google Drive are saved asynchronously. The ID for saving
    future messages is requested in advance. This ensures instant responses and eliminates the need to wait for the
